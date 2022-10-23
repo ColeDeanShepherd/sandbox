@@ -28,4 +28,8 @@ jobs:
           cd ./Idris2
           export SCHEME=$GITHUB_WORKSPACE/chez-scheme/scheme
           make bootstrap && make install
-      
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v3.1.1
+          with:
+            name: idris2.exe
+            path: ./Idris2/build/exec/idris2.exe
