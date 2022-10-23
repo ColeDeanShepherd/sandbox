@@ -1,0 +1,1 @@
+docker build -t idris-homebrew:v1 .
