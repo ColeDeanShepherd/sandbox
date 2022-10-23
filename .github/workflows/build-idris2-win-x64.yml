@@ -26,7 +26,7 @@ jobs:
         shell: msys2 {0}
         run: |
           cd ./Idris2
-          export SCHEME=$GITHUB_WORKSPACE/chez-scheme/scheme
+          export SCHEME=$GITHUB_WORKSPACE/chez-scheme-9.5.8/bin/ta6nt/scheme
           make bootstrap && make install
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v3.1.1
