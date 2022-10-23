@@ -26,8 +26,8 @@ jobs:
       - name: Setup .bash_profile
         shell: msys2 {0}
         run: |
-          echo 'export PATH="$PATH:/c/ChezScheme9.5.8/bin/ta6nt"' >> .bash_profile
-          echo 'export SCHEME=scheme' >> .bash_profile
+          echo 'export PATH="$PATH:/c/ChezScheme9.5.8/bin/ta6nt"' >> ~/.bash_profile
+          echo 'export SCHEME=scheme' >> ~/.bash_profile
       - name: Checkout Idris 2
         uses: actions/checkout@v3
         with:
@@ -36,7 +36,6 @@ jobs:
       - name: Build Idris
         shell: msys2 {0}
         run: |
-          cat .bash_profile
           cd ./Idris2
           make bootstrap
           make install
