@@ -17,6 +17,16 @@ jobs:
         run: |
           pacman --noconfirm -Syu
           pacman --noconfirm -S make mingw-w64-x86_64-gcc
+      - name: Install Chez Scheme
+        run: |
+          curl -L -o ChezScheme9.5.8.exe https://github.com/cisco/ChezScheme/releases/download/v9.5.8/ChezScheme9.5.8.exe
+          ChezScheme9.5.8.exe /quiet /qn /norestart /L*V "msilog.log"
+          xcopy /S /I /Q /Y /F "C:\Program Files\Chez Scheme 9.5.8" C:\ChezScheme9.5.8
+      - name: Setup .bash_profile
+        shell: msys2 {0}
+        run: |
+          echo 'export PATH="$PATH:/c/ChezScheme9.5.8/bin/ta6nt"' >> .bash_profile
+          echo 'export SCHEME=scheme' >> .bash_profile
       - name: Checkout Idris 2
         uses: actions/checkout@v3
         with:
@@ -26,10 +36,17 @@ jobs:
         shell: msys2 {0}
         run: |
           cd ./Idris2
-          export SCHEME=$GITHUB_WORKSPACE/chez-scheme-9.5.8/bin/ta6nt/scheme
-          make bootstrap && make install
+          make bootstrap
+          make install
+          zip -r repo.zip ./
+          zip -r build.zip ~/.idris2/bin
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v3.1.1
         with:
-          name: idris2.exe
-          path: ./Idris2/build/exec/idris2.exe
+          name: repo.zip
+          path: ./Idris2/repo.zip
+      - name: Upload a Build Artifact 2
+        uses: actions/upload-artifact@v3.1.1
+        with:
+          name: build.zip
+          path: ./Idris2/build.zip
