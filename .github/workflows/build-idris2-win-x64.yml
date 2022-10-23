@@ -39,15 +39,10 @@ jobs:
           cd ./Idris2
           make bootstrap
           make install
-          zip -r repo.zip ./
-          zip -r build.zip ~/.idris2/bin
-      - name: Upload a Build Artifact
+      - name: Upload Build Artifacts
         uses: actions/upload-artifact@v3.1.1
         with:
-          name: repo.zip
-          path: ./Idris2/repo.zip
-      - name: Upload a Build Artifact 2
-        uses: actions/upload-artifact@v3.1.1
-        with:
-          name: build.zip
-          path: ./Idris2/build.zip
+          name: Idris2
+          path: |
+            ./Idris2
+            ~/.idris2
