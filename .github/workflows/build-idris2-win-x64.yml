@@ -44,5 +44,4 @@ jobs:
         with:
           name: Idris2
           path: |
-            ./Idris2
-            ~/.idris2
+            /home/runneradmin/.idris2/bin
