@@ -25,8 +25,8 @@ RUN cd Idris2 \
 	&& make all \
 	&& make install \
 	&& make install-api \
-#	&& make test \
-#	&& eval "$(idris2 --bash-completion-script idris2)"
+	&& make test \
+	&& eval "$(idris2 --bash-completion-script idris2)" \
 	&& make clean
 
 CMD ["/bin/bash"]
