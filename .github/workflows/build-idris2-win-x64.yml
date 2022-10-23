@@ -17,8 +17,6 @@ jobs:
         run: |
           pacman --noconfirm -Syu
           pacman --noconfirm -S make mingw-w64-x86_64-gcc
-      - name: Add Chez Scheme to PATH
-        run: echo "chez-scheme" >> $GITHUB_PATH
       - name: Checkout Idris 2
         uses: actions/checkout@v3
         with:
@@ -28,6 +26,6 @@ jobs:
         shell: msys2 {0}
         run: |
           cd ./Idris2
-          export SCHEME=scheme
+          export SCHEME=$GITHUB_WORKSPACE/chez-scheme/scheme
           make bootstrap && make install
       
