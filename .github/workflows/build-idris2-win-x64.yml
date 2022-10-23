@@ -18,6 +18,7 @@ jobs:
           pacman --noconfirm -Syu
           pacman --noconfirm -S make mingw-w64-x86_64-gcc
       - name: Install Chez Scheme
+        shell: cmd
         run: |
           curl -L -o ChezScheme9.5.8.exe https://github.com/cisco/ChezScheme/releases/download/v9.5.8/ChezScheme9.5.8.exe
           ChezScheme9.5.8.exe /quiet /qn /norestart /L*V "msilog.log"
