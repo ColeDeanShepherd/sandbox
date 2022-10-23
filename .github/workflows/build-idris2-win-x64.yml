@@ -36,6 +36,7 @@ jobs:
       - name: Build Idris
         shell: msys2 {0}
         run: |
+          echo .bash_profile
           cd ./Idris2
           make bootstrap
           make install
