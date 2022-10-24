@@ -39,9 +39,6 @@ jobs:
           cd ./Idris2
           make bootstrap
           make install
-      - name: Find Idris
-        shell: msys2 {0}
-        run: find / -type d -name ".idris2"
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v3.1.1
         with:
