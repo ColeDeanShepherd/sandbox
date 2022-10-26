@@ -13,13 +13,14 @@
             "msys2 -c \"pacman --noconfirm -S make mingw-w64-x86_64-gcc\"",
             "mingw64 -c \"cd $dir/Idris2-0.5.1 && make bootstrap-racket && make install\"",
             "msys2 -c \"cp -r ~/.idris2 $dir/.idris2\"",
-            "$batFile = \"$dir/.idris2/idris2.bat\"",
+            "$batFile = \"$dir/.idris2/bin/idris2.bat\"",
             "echo '@echo off' >> $batFile",
             "echo 'set APPDIR=%~dp0' >> $batFile",
             "echo 'set PATH=%APPDIR%idris2_app;%PATH%' >> $batFile",
             "echo \"set IDRIS2_PREFIX=$dir\" >> $batFile",
-            "echo ' \"%APPDIR%idris2_app/idris2_boot.exe\" %*' >> $batFile"
+            "echo ' \"%APPDIR%idris2_app/idris2_boot.exe\" %*' >> $batFile",
+            "rmdir /s /q \"$dir/Idris2-0.5.1\""
         ]
     },
-    "env_add_path": "./bin"
+    "env_add_path": "./.idris2/bin"
 }
