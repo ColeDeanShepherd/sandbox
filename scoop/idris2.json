@@ -1,0 +1,20 @@
+{
+    "version": "0.5.1",
+    "description": "Pure functional programming language with dependent types",
+    "homepage": "https://www.idris-lang.org/",
+    "url": ["https://github.com/idris-lang/Idris2/archive/refs/tags/v0.5.1.tar.gz"],
+    "hash": ["da44154f6eba5e22ec5ac64c6ba2c28d2df0a57cf620c5b00c11adb51dbda399"],
+    "license": "BSD-3-Clause",
+    "depends": ["msys2", "make", "racket"],
+    "installer": {
+        "script": [
+            "$dir = \"$dir\".Replace('\\', '/')",
+            "msys2 -c \"pacman --noconfirm -Syu\"",
+            "msys2 -c \"pacman --noconfirm -S make mingw-w64-x86_64-gcc\"",
+            "mingw64 -c \"cd $dir && cd Idris2-0.5.1 && make bootstrap-racket && make install\"",
+            "msys2 -c \"cp -r ~/.idris2 $dir/.idris2\"",
+            "msys2 -c \"cd $dir/.idris2/bin && echo '@echo off\r\nset APPDIR=%~dp0\r\nset PATH=%APPDIR%idris2_app;%PATH%\r\nset IDRIS2_PREFIX=$dir\r\n' >> idris2.cmd\""
+        ]
+    },
+    "env_add_path": "./bin"
+}
