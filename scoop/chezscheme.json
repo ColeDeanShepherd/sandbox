@@ -1,0 +1,38 @@
+{
+    "version": "9.5.8",
+    "description": "Implementation of the Chez Scheme language",
+    "homepage": "https://cisco.github.io/ChezScheme/",
+    "url": "https://github.com/cisco/ChezScheme/archive/v9.5.8.tar.gz#/v9.5.8",
+    "hash": "a00b1fb1c175dd51ab2efee298c3323f44fe901ab3ec6fbb6d7a3d9ef66bf989",
+    "license": "Apache-2.0",
+    "depends": ["msys2"],
+    "installer": {
+        "script": [
+            "$ver = '9.5.8'",
+            "$dir = \"$dir\".Replace('\\', '/')",
+            "$msys2Dir = \"$scoopdir/apps/msys2/current/\"",
+            "$srcArchive = \"v$ver.tar.gz\"",
+            "$srcTar = \"v$ver.tar\"",
+            "$srcDir = \"v$ver\"",
+            "$tmpArchive = $srcDir",
+
+            "$env:MSYS2_PATH_TYPE = 'inherit'",
+            
+            "mingw64 -c \"pacman --noconfirm -Syu\"",
+            "mingw64 -c \"pacman --noconfirm -S make mingw-w64-x86_64-gcc\"",
+
+            "cd $dir",
+            "ren $tmpArchive $srcArchive",
+
+            "7z x $srcArchive -y",
+            "Remove-Item $srcArchive",
+            
+            "$extractTarCommand = \"-Command `\"& {cd $dir; 7z x $srcTar -y}`\"\"",
+            "Start-Process powershell -Verb RunAs -Wait -ArgumentList \"$extractTarCommand\"",
+            "Remove-Item $srcTar",
+            
+            "mingw64 -c \"cd $dir/ChezScheme-9.5.8 && ./configure --threads && make\""
+        ]
+    },
+    "env_add_path": "./ChezScheme-9.5.8\ta6nt\bin\ta6nt"
+}
