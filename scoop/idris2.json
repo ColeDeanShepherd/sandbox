@@ -18,7 +18,8 @@
             "msys2 -c \"pacman --noconfirm -Syu\"",
             "msys2 -c \"pacman --noconfirm -S make mingw-w64-x86_64-gcc\"",
 
-            "mingw64 -c \"cd $srcDir && make bootstrap && make install\""
+            "mingw64 -c \"cd $srcDir && export SCHEME=scheme && make bootstrap && make install\"",
+            "msys2 -c \"cp -r ~/.idris2 $dir/.idris2\""
         ]
     },
     "env_add_path": "./.idris2/bin"
