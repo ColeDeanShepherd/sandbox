@@ -6,6 +6,7 @@
     "hash": "a00b1fb1c175dd51ab2efee298c3323f44fe901ab3ec6fbb6d7a3d9ef66bf989",
     "license": "Apache-2.0",
     "depends": ["msys2"],
+    "##": "This will show a UAC prompt when unzipping the source code because it contains symlinks.",
     "installer": {
         "script": [
             "$ver = '9.5.8'",
