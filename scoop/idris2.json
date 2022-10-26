@@ -8,18 +8,23 @@
     "depends": ["msys2", "racket"],
     "installer": {
         "script": [
+            "$ver = '0.5.1'",
             "$dir = \"$dir\".Replace('\\', '/')",
+            "$srcDir = \"$dir/Idris2-$ver\"",
+            "$targetDir = \"$dir/.idris2\"",
+
             "msys2 -c \"pacman --noconfirm -Syu\"",
             "msys2 -c \"pacman --noconfirm -S make mingw-w64-x86_64-gcc\"",
-            "mingw64 -c \"cd $dir/Idris2-0.5.1 && make bootstrap-racket && make install\"",
-            "msys2 -c \"cp -r ~/.idris2 $dir/.idris2\"",
-            "$batFile = \"$dir/.idris2/bin/idris2.bat\"",
-            "echo '@echo off' >> $batFile",
-            "echo 'set APPDIR=%~dp0' >> $batFile",
-            "echo 'set PATH=%APPDIR%idris2_app;%PATH%' >> $batFile",
-            "echo \"set IDRIS2_PREFIX=$dir\" >> $batFile",
-            "echo ' \"%APPDIR%idris2_app/idris2_boot.exe\" %*' >> $batFile",
-            "rmdir /s /q \"$dir/Idris2-0.5.1\""
+
+            "mingw64 -c \"cd $srcDir && make bootstrap-racket && make install\"",
+
+            "msys2 -c \"cp -r ~/.idris2 $targetDir\"",
+            "msys2 -c \"cp -r $srcDir/bootstrap-build/idris2-$ver $targetDir\"",
+
+            "$batFileContents = '@echo off\\nset APPDIR=%~dp0\\nset IDRIS2_PREFIX=%APPDIR%/../\\n%APPDIR%idris2_app/idris2-boot.exe %*'",
+            "msys2 -c \"echo -e '$batFileContents' >> $targetDir/bin/idris2.bat\"",
+            
+            "msys2 -c \"rm -rf $srcDir\""
         ]
     },
     "env_add_path": "./.idris2/bin"
