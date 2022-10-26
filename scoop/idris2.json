@@ -5,26 +5,20 @@
     "url": "https://github.com/idris-lang/Idris2/archive/refs/tags/v0.5.1.tar.gz",
     "hash": "da44154f6eba5e22ec5ac64c6ba2c28d2df0a57cf620c5b00c11adb51dbda399",
     "license": "BSD-3-Clause",
-    "depends": ["msys2", "racket"],
+    "depends": ["msys2", "chezscheme"],
     "installer": {
         "script": [
             "$ver = '0.5.1'",
             "$dir = \"$dir\".Replace('\\', '/')",
             "$srcDir = \"$dir/Idris2-$ver\"",
             "$targetDir = \"$dir/.idris2\"",
+            
+            "$env:MSYS2_PATH_TYPE = 'inherit'",
 
             "msys2 -c \"pacman --noconfirm -Syu\"",
             "msys2 -c \"pacman --noconfirm -S make mingw-w64-x86_64-gcc\"",
 
-            "mingw64 -c \"cd $srcDir && make bootstrap-racket && make install\"",
-
-            "msys2 -c \"cp -r ~/.idris2 $targetDir\"",
-            "msys2 -c \"cp -r $srcDir/bootstrap-build/idris2-$ver $targetDir\"",
-
-            "$batFileContents = '@echo off\\nset APPDIR=%~dp0\\nset IDRIS2_PREFIX=%APPDIR%/../\\n%APPDIR%idris2_app/idris2-boot.exe %*'",
-            "msys2 -c \"echo -e '$batFileContents' >> $targetDir/bin/idris2.bat\"",
-            
-            "msys2 -c \"rm -rf $srcDir\""
+            "mingw64 -c \"cd $srcDir && make bootstrap && make install\""
         ]
     },
     "env_add_path": "./.idris2/bin"
