@@ -2,37 +2,24 @@
     "version": "9.5.8",
     "description": "Implementation of the Chez Scheme language",
     "homepage": "https://cisco.github.io/ChezScheme/",
-    "url": "https://github.com/cisco/ChezScheme/archive/v9.5.8.tar.gz#/v9.5.8",
-    "hash": "a00b1fb1c175dd51ab2efee298c3323f44fe901ab3ec6fbb6d7a3d9ef66bf989",
+    "##": "Scoop requires a URL to be specified, so we specify the Git repo URL to silence errors.",
+    "url": "https://github.com/cisco/ChezScheme.git",
     "license": "Apache-2.0",
-    "depends": ["msys2"],
-    "##": "This will show a UAC prompt when unzipping the source code because it contains symlinks.",
+    "depends": ["msys2", "git"],
     "installer": {
         "script": [
             "$ver = '9.5.8'",
+            "$verWithPrefix = \"v$ver\"",
             "$dir = \"$dir\".Replace('\\', '/')",
-            "$srcArchive = \"v$ver.tar.gz\"",
-            "$srcTar = \"v$ver.tar\"",
-            "$srcDir = \"v$ver\"",
-            "$tmpArchive = $srcDir",
 
-            "$env:MSYS2_PATH_TYPE = 'inherit'",
-            
+            "cd $dir",
+            "git clone --depth 1 --branch $verWithPrefix https://github.com/cisco/ChezScheme.git",
+
             "mingw64 -c \"pacman --noconfirm -Syu\"",
             "mingw64 -c \"pacman --noconfirm -S make mingw-w64-x86_64-gcc\"",
 
-            "cd $dir",
-            "ren $tmpArchive $srcArchive",
-
-            "7z x $srcArchive -y",
-            "Remove-Item $srcArchive",
-            
-            "$extractTarCommand = \"-Command `\"& {cd $dir; 7z x $srcTar -y}`\"\"",
-            "Start-Process powershell -Verb RunAs -Wait -ArgumentList \"$extractTarCommand\"",
-            "Remove-Item $srcTar",
-            
-            "mingw64 -c \"cd $dir/ChezScheme-9.5.8 && ./configure --threads && make\""
+            "mingw64 -c \"cd $dir/ChezScheme && git config core.autocrlf false && ./configure --threads && make\""
         ]
     },
-    "env_add_path": "./ChezScheme-9.5.8\ta6nt\bin\ta6nt"
+    "env_add_path": "./ChezScheme/ta6nt/bin/ta6nt"
 }
