@@ -33,7 +33,7 @@
     },
     "checkver": {
         "url": "https://www.idris-lang.org/pages/download.html",
-        "regex": "Idris 2 (\\d\\.\\d\\.\\d)"
+        "regex": "Idris 2 ([\\d]+\\.[\\d]+\\.[\\d]+)"
     },
     "autoupdate": {
         "architecture": {

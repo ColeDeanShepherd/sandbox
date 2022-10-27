@@ -36,7 +36,7 @@
     "env_add_path": "./ChezScheme/ta6nt/bin/ta6nt",
     "checkver": {
         "url": "https://cisco.github.io/ChezScheme/",
-        "regex": "Chez Scheme Version ([\\d.]+)"
+        "regex": "Chez Scheme Version ([\\d]+\\.[\\d]+\\.[\\d]+)"
     },
     "autoupdate": {
         "architecture": {
