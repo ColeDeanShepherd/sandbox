@@ -11,7 +11,6 @@
         "script": [
             "$ver = '9.5.8'",
             "$dir = \"$dir\".Replace('\\', '/')",
-            "$msys2Dir = \"$scoopdir/apps/msys2/current/\"",
             "$srcArchive = \"v$ver.tar.gz\"",
             "$srcTar = \"v$ver.tar\"",
             "$srcDir = \"v$ver\"",
