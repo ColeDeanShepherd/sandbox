@@ -1,2 +1,2 @@
-# idris-sandbox
-Various Idris experiments &amp; programs.
+# sandbox
+Various experiments &amp; programs.
