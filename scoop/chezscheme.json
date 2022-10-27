@@ -11,6 +11,7 @@
             "$ver = '9.5.8'",
             "$verWithPrefix = \"v$ver\"",
             "$dir = \"$dir\".Replace('\\', '/')",
+            "$origDir = $PWD.Path",
 
             "cd $dir",
             "git clone --depth 1 --branch $verWithPrefix https://github.com/cisco/ChezScheme.git",
@@ -18,7 +19,9 @@
             "mingw64 -c \"pacman --noconfirm -Syu\"",
             "mingw64 -c \"pacman --noconfirm -S make mingw-w64-x86_64-gcc\"",
 
-            "mingw64 -c \"cd $dir/ChezScheme && git config core.autocrlf false && ./configure --threads && make\""
+            "mingw64 -c \"cd $dir/ChezScheme && git config core.autocrlf false && ./configure --threads && make\"",
+
+            "cd $origDir"
         ]
     },
     "env_add_path": "./ChezScheme/ta6nt/bin/ta6nt"
