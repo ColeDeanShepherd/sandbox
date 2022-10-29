@@ -5,3 +5,5 @@ idris2/**/build/
 csharp/**/bin
 csharp/**/obj
 csharp/**/.vs
+
+rust/**/target/
