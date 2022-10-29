@@ -1,5 +1,7 @@
 module Main
 
+import SDL2
+
 -- To-Do
 -- - Game configuration
 -- - Game state
@@ -40,4 +42,10 @@ record GameState where
     rScore : Int
 
 main : IO ()
-main = putStrLn "Hello world"
+main = do
+    x <- primIO (SDL_Init SDL_INIT_VIDEO)
+    win <- primIO (SDL_CreateWindow "Test" 100 100 640 480 0)
+    surf <- primIO (SDL_GetWindowSurface win)
+    y <- primIO (SDL_UpdateWindowSurface win)
+    primIO  (SDL_Delay 5000)
+    putStrLn (show x)

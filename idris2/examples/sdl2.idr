@@ -1,0 +1,26 @@
+module SDL2
+
+export
+SDL_INIT_VIDEO : Int
+SDL_INIT_VIDEO = 0x00000020
+
+%foreign "C:SDL_CreateWindow,SDL2"
+export
+SDL_CreateWindow : String -> Int -> Int -> Int -> Int -> Int -> PrimIO AnyPtr
+
+%foreign "C:SDL_GetWindowSurface,SDL2"
+export
+SDL_GetWindowSurface : AnyPtr -> PrimIO AnyPtr
+
+%foreign "C:SDL_UpdateWindowSurface,SDL2"
+export
+SDL_UpdateWindowSurface : AnyPtr -> PrimIO Int
+
+%foreign "C:SDL_Delay,SDL2"
+export
+SDL_Delay : Int -> PrimIO ()
+
+%foreign "C:SDL_Init,SDL2"
+export
+SDL_Init : Int -> PrimIO Int
+
