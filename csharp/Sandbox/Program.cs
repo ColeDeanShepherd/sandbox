@@ -47,6 +47,7 @@ public static class Program
 {
     public static readonly HashSet<string> RecordNameWhitelist = new()
     {
+        "SDL_Event"
     };
 
     public static readonly HashSet<string> FunctionNameWhitelist = new()
@@ -55,7 +56,11 @@ public static class Program
         "SDL_CreateWindow",
         "SDL_GetWindowSurface",
         "SDL_UpdateWindowSurface",
-        "SDL_Delay"
+        "SDL_Delay",
+        "SDL_CreateRenderer",
+        "SDL_RenderSetLogicalSize",
+        "SDL_RenderClear",
+        "SDL_RenderPresent"
     };
 
     public static List<Struct> Structs = new();
@@ -72,17 +77,26 @@ public static class Program
 
         unsafe
         {
-            //tu.Cursor.VisitChildren(VisitStructs, clientData);
+            tu.Cursor.VisitChildren(VisitStructs, clientData);
             tu.Cursor.VisitChildren(VisitFunctions, clientData);
         }
 
         StringBuilder stringBuilder = new();
+
+        void AppendIntConstant(string name, string value)
+        {
+            stringBuilder.AppendLine("export");
+            stringBuilder.AppendLine($"{name} : Int");
+            stringBuilder.AppendLine($"{name} = {value}");
+        }
+
         stringBuilder.AppendLine("module SDL2");
         stringBuilder.AppendLine();
 
-        stringBuilder.AppendLine("export");
-        stringBuilder.AppendLine("SDL_INIT_VIDEO : Int");
-        stringBuilder.AppendLine("SDL_INIT_VIDEO = 0x00000020");
+        AppendIntConstant("SDL_INIT_VIDEO", "0x00000020");
+        stringBuilder.AppendLine();
+
+        AppendIntConstant("SDL_RENDERER_ACCELERATED", "0x00000002");
         stringBuilder.AppendLine();
 
         foreach (var @struct in Structs)
@@ -102,6 +116,10 @@ public static class Program
 
     unsafe public static CXChildVisitResult VisitStructs(CXCursor cursor, CXCursor parent, void* clientData)
     {
+        if (cursor.DisplayName.CString == "SDL_Event")
+        {
+            var sdf = 3;
+        }
         if (cursor.Kind == CXCursorKind.CXCursor_StructDecl)
         {
             if (RecordNameWhitelist.Contains(cursor.DisplayName.CString))

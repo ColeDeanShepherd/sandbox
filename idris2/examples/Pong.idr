@@ -45,7 +45,14 @@ main : IO ()
 main = do
     x <- primIO (SDL_Init SDL_INIT_VIDEO)
     win <- primIO (SDL_CreateWindow "Test" 100 100 640 480 0)
+    rend <- primIO (SDL_CreateRenderer win (-1) SDL_RENDERER_ACCELERATED)
+    x <- primIO (SDL_RenderSetLogicalSize rend 640 480)
+
     surf <- primIO (SDL_GetWindowSurface win)
     y <- primIO (SDL_UpdateWindowSurface win)
+
+    res <- primIO (SDL_RenderClear rend)
+    primIO (SDL_RenderPresent rend)
+    
     primIO  (SDL_Delay 5000)
-    putStrLn (show x)
+    pure ()
