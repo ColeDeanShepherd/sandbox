@@ -3,11 +3,9 @@ module SDL2
 export
 SDL_INIT_VIDEO : Int
 SDL_INIT_VIDEO = 0x00000020
-
 export
 SDL_RENDERER_ACCELERATED : Int
 SDL_RENDERER_ACCELERATED = 0x00000002
-
 %foreign "C:SDL_CreateWindow,SDL2"
 export
 SDL_CreateWindow : String -> Int -> Int -> Int -> Int -> Int -> PrimIO AnyPtr

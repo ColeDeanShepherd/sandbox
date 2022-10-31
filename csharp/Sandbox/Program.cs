@@ -7,16 +7,18 @@ using System.Text;
 namespace Sandbox;
 
 [GenerateOneOf]
-public partial class DataType : OneOfBase<VoidType, S8Type, U8Type, SSizeType, USizeType, PointerType, ArrayType, StructType>
+public partial class DataType : OneOfBase<VoidType, BooleanType, S8Type, U8Type, SSizeType, USizeType, PointerType, ArrayType, StructType>
 {
     public static readonly DataType Void = new VoidType();
+    public static readonly DataType Boolean = new BooleanType();
     public static readonly DataType S8 = new S8Type();
-    public static readonly DataType U8 = new S8Type();
+    public static readonly DataType U8 = new U8Type();
     public static readonly DataType SSize = new SSizeType();
     public static readonly DataType USize = new USizeType();
 }
 
 public record VoidType();
+public record BooleanType();
 public record S8Type();
 public record U8Type();
 public record SSizeType();
@@ -45,31 +47,69 @@ public static class Extensions
 
 public static class Program
 {
-    public static readonly HashSet<string> RecordNameWhitelist = new()
-    {
-        "SDL_Event"
-    };
-
-    public static readonly HashSet<string> FunctionNameWhitelist = new()
-    {
-        "SDL_Init",
-        "SDL_CreateWindow",
-        "SDL_GetWindowSurface",
-        "SDL_UpdateWindowSurface",
-        "SDL_Delay",
-        "SDL_CreateRenderer",
-        "SDL_RenderSetLogicalSize",
-        "SDL_RenderClear",
-        "SDL_RenderPresent"
-    };
-
     public static List<Struct> Structs = new();
     public static List<Function> Functions = new();
 
     public static async Task Main(string[] args)
     {
-        const string filePath = "C:/Users/R_SD/dev/personal/SDL/include/SDL.h";
+        await GenerateIdris2Bindings(
+            "C:/Users/R_SD/dev/personal/SDL/include/SDL.h",
+            new()
+            {
+                "SDL_Event"
+            },
+            new()
+            {
+                "SDL_Init",
+                "SDL_CreateWindow",
+                "SDL_GetWindowSurface",
+                "SDL_UpdateWindowSurface",
+                "SDL_Delay",
+                "SDL_CreateRenderer",
+                "SDL_RenderSetLogicalSize",
+                "SDL_RenderClear",
+                "SDL_RenderPresent"
+            },
+            new()
+            {
+                ("SDL_INIT_VIDEO", "Int", "0x00000020"),
+                ("SDL_RENDERER_ACCELERATED", "Int", "0x00000002")
+            },
+            "SDL2",
+            @"C:\Users\R_SD\dev\personal\sandbox\idris2\examples\sdl2.idr");
 
+        await GenerateIdris2Bindings(
+            @"C:\Users\R_SD\Downloads\raylib-4.2.0_win64_msvc16\raylib-4.2.0_win64_msvc16\include\raylib.h",
+            new()
+            {
+            },
+            new()
+            {
+                "InitWindow",
+                "SetTargetFPS",
+                "WindowShouldClose",
+                "IsKeyDown",
+                "BeginDrawing",
+                "ClearBackground",
+                "EndDrawing",
+                "CloseWindow",
+                "DrawRectangle",
+            },
+            new()
+            {
+            },
+            "Raylib",
+            @"C:\Users\R_SD\dev\personal\sandbox\idris2\examples\raylib.idr");
+    }
+
+    public static async Task GenerateIdris2Bindings(
+        string filePath,
+        HashSet<string> recordNameWhitelist,
+        HashSet<string> functionNameWhitelist,
+        List<(string, string, string)> constants,
+        string moduleName,
+        string outFilePath)
+    {
         var index = CXIndex.Create(false, true);
         var tu = CXTranslationUnit.Parse(index, filePath, new string[0], new CXUnsavedFile[0], CXTranslationUnit_Flags.CXTranslationUnit_None);
 
@@ -77,27 +117,30 @@ public static class Program
 
         unsafe
         {
-            tu.Cursor.VisitChildren(VisitStructs, clientData);
-            tu.Cursor.VisitChildren(VisitFunctions, clientData);
+            tu.Cursor.VisitChildren(
+                (CXCursor cursor, CXCursor parent, void* clientData) => VisitStructs(recordNameWhitelist, cursor),
+                clientData);
+            tu.Cursor.VisitChildren(
+                (CXCursor cursor, CXCursor parent, void* clientData) => VisitFunctions(functionNameWhitelist, cursor),
+                clientData);
         }
 
         StringBuilder stringBuilder = new();
 
-        void AppendIntConstant(string name, string value)
+        void AppendConstant(string name, string type, string value)
         {
             stringBuilder.AppendLine("export");
-            stringBuilder.AppendLine($"{name} : Int");
+            stringBuilder.AppendLine($"{name} : {type}");
             stringBuilder.AppendLine($"{name} = {value}");
         }
 
-        stringBuilder.AppendLine("module SDL2");
+        stringBuilder.AppendLine($"module {moduleName}");
         stringBuilder.AppendLine();
 
-        AppendIntConstant("SDL_INIT_VIDEO", "0x00000020");
-        stringBuilder.AppendLine();
-
-        AppendIntConstant("SDL_RENDERER_ACCELERATED", "0x00000002");
-        stringBuilder.AppendLine();
+        foreach (var c in constants)
+        {
+            AppendConstant(c.Item1, c.Item2, c.Item3);
+        }
 
         foreach (var @struct in Structs)
         {
@@ -111,18 +154,14 @@ public static class Program
             stringBuilder.AppendLine();
         }
 
-        await File.WriteAllTextAsync(@"C:\Users\R_SD\dev\personal\sandbox\idris2\examples\sdl2.idr", stringBuilder.ToString().ReplaceLineEndings("\n"));
+        await File.WriteAllTextAsync(outFilePath, stringBuilder.ToString().ReplaceLineEndings("\n"));
     }
 
-    unsafe public static CXChildVisitResult VisitStructs(CXCursor cursor, CXCursor parent, void* clientData)
+    unsafe public static CXChildVisitResult VisitStructs(HashSet<string> recordNameWhitelist, CXCursor cursor)
     {
-        if (cursor.DisplayName.CString == "SDL_Event")
-        {
-            var sdf = 3;
-        }
         if (cursor.Kind == CXCursorKind.CXCursor_StructDecl)
         {
-            if (RecordNameWhitelist.Contains(cursor.DisplayName.CString))
+            if (recordNameWhitelist.Contains(cursor.DisplayName.CString))
             {
                 Structs.Add(ParseStruct(cursor));
             }
@@ -131,11 +170,11 @@ public static class Program
         return CXChildVisitResult.CXChildVisit_Continue;
     }
 
-    unsafe public static CXChildVisitResult VisitFunctions(CXCursor cursor, CXCursor parent, void* clientData)
+    unsafe public static CXChildVisitResult VisitFunctions(HashSet<string> functionNameWhitelist, CXCursor cursor)
     {
         if (cursor.Kind == CXCursorKind.CXCursor_FunctionDecl)
         {
-            if (FunctionNameWhitelist.Contains(cursor.Name.CString))
+            if (functionNameWhitelist.Contains(cursor.Name.CString))
             {
                 Functions.Add(ParseFunction(cursor));
             }
@@ -174,6 +213,7 @@ public static class Program
             return type.kind switch
             {
                 CXTypeKind.CXType_Void => DataType.Void,
+                CXTypeKind.CXType_Bool => DataType.Boolean,
                 CXTypeKind.CXType_Char_S => DataType.S8,
                 CXTypeKind.CXType_Char_U => DataType.U8,
                 CXTypeKind.CXType_UChar => DataType.U8,
@@ -230,6 +270,7 @@ public static class Program
     private static string ToIdrisTypeString(DataType dataType) =>
         dataType.Match(
             voidType => "()",
+            booleanType => "Bool",
             s8Type => "Int",
             u8Type => "Int",
             sSizeType => "Int",
