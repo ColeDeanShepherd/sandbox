@@ -80,6 +80,10 @@ public static class Program
             "C:/Users/R_SD/dev/personal/SDL/include/SDL.h",
             new()
             {
+                "System.FFI"
+            },
+            new()
+            {
                 "SDL_Event"
             },
             new()
@@ -129,6 +133,7 @@ public static class Program
 
     public static async Task GenerateIdris2Bindings(
         string filePath,
+        HashSet<string> imports,
         HashSet<string> typeNameWhitelist,
         HashSet<string> functionNameWhitelist,
         List<(string, string, string)> constants,
@@ -159,9 +164,21 @@ public static class Program
         stringBuilder.AppendLine($"module {moduleName}");
         stringBuilder.AppendLine();
 
+        foreach (var i in imports)
+        {
+            stringBuilder.AppendLine($"import {i}");
+            stringBuilder.AppendLine();
+        }
+
         foreach (var c in constants)
         {
             AppendConstant(c.Item1, c.Item2, c.Item3);
+            stringBuilder.AppendLine();
+        }
+
+        foreach (var @enum in Enums.Values)
+        {
+            WriteEnum(stringBuilder, @enum);
             stringBuilder.AppendLine();
         }
 
@@ -174,12 +191,6 @@ public static class Program
         foreach (var union in Unions.Values)
         {
             WriteUnion(stringBuilder, union);
-            stringBuilder.AppendLine();
-        }
-
-        foreach (var @enum in Enums.Values)
-        {
-            WriteEnum(stringBuilder, @enum);
             stringBuilder.AppendLine();
         }
 
@@ -449,7 +460,10 @@ public static class Program
 
     public static void WriteEnum(StringBuilder stringBuilder, Enum node)
     {
+        stringBuilder.AppendLine($"{node.Name} : Type");
+        stringBuilder.AppendLine($"{node.Name} = Int");
 
+        //stringBuilder.AppendLine($"data {node.Name} = {string.Join(" | ", node.)}");
     }
 
     public static void WriteFunction(StringBuilder stringBuilder, Function node)

@@ -1,5 +1,7 @@
 module SDL2
 
+import System.FFI
+
 export
 SDL_INIT_VIDEO : Int
 SDL_INIT_VIDEO = 0x00000020
@@ -7,6 +9,12 @@ SDL_INIT_VIDEO = 0x00000020
 export
 SDL_RENDERER_ACCELERATED : Int
 SDL_RENDERER_ACCELERATED = 0x00000002
+
+SDL_Scancode : Type
+SDL_Scancode = Int
+
+SDL_JoystickPowerLevel : Type
+SDL_JoystickPowerLevel = Int
 
 SDL_CommonEvent : Type
 SDL_CommonEvent = Struct "SDL_CommonEvent" [("type", Int), ("timestamp", Int)]
@@ -103,8 +111,6 @@ SDL_DropEvent = Struct "SDL_DropEvent" [("type", Int), ("timestamp", Int), ("fil
 
 SDL_Event : Type
 SDL_Event = Struct "SDL_Event" [("type", Int), ("common", SDL_CommonEvent), ("display", SDL_DisplayEvent), ("window", SDL_WindowEvent), ("key", SDL_KeyboardEvent), ("edit", SDL_TextEditingEvent), ("editExt", SDL_TextEditingExtEvent), ("text", SDL_TextInputEvent), ("motion", SDL_MouseMotionEvent), ("button", SDL_MouseButtonEvent), ("wheel", SDL_MouseWheelEvent), ("jaxis", SDL_JoyAxisEvent), ("jball", SDL_JoyBallEvent), ("jhat", SDL_JoyHatEvent), ("jbutton", SDL_JoyButtonEvent), ("jdevice", SDL_JoyDeviceEvent), ("jbattery", SDL_JoyBatteryEvent), ("caxis", SDL_ControllerAxisEvent), ("cbutton", SDL_ControllerButtonEvent), ("cdevice", SDL_ControllerDeviceEvent), ("ctouchpad", SDL_ControllerTouchpadEvent), ("csensor", SDL_ControllerSensorEvent), ("adevice", SDL_AudioDeviceEvent), ("sensor", SDL_SensorEvent), ("quit", SDL_QuitEvent), ("user", SDL_UserEvent), ("syswm", SDL_SysWMEvent), ("tfinger", SDL_TouchFingerEvent), ("mgesture", SDL_MultiGestureEvent), ("dgesture", SDL_DollarGestureEvent), ("drop", SDL_DropEvent), ("padding", [Bits8])]
-
-
 
 %foreign "C:SDL_CreateWindow,SDL2"
 export
