@@ -32,13 +32,13 @@ SDL_KeyboardEvent : Type
 SDL_KeyboardEvent = Struct "SDL_KeyboardEvent" [("type", Int), ("timestamp", Int), ("windowID", Int), ("state", Bits8), ("repeat", Bits8), ("padding2", Bits8), ("padding3", Bits8), ("keysym", SDL_Keysym)]
 
 SDL_TextEditingEvent : Type
-SDL_TextEditingEvent = Struct "SDL_TextEditingEvent" [("type", Int), ("timestamp", Int), ("windowID", Int), ("text", [Bits8]), ("start", Bits16), ("length", Bits16)]
+SDL_TextEditingEvent = Struct "SDL_TextEditingEvent" [("type", Int), ("timestamp", Int), ("windowID", Int), ("text", Ptr Bits8), ("start", Bits16), ("length", Bits16)]
 
 SDL_TextEditingExtEvent : Type
 SDL_TextEditingExtEvent = Struct "SDL_TextEditingExtEvent" [("type", Int), ("timestamp", Int), ("windowID", Int), ("text", String), ("start", Bits16), ("length", Bits16)]
 
 SDL_TextInputEvent : Type
-SDL_TextInputEvent = Struct "SDL_TextInputEvent" [("type", Int), ("timestamp", Int), ("windowID", Int), ("text", [Bits8])]
+SDL_TextInputEvent = Struct "SDL_TextInputEvent" [("type", Int), ("timestamp", Int), ("windowID", Int), ("text", Ptr Bits8)]
 
 SDL_MouseMotionEvent : Type
 SDL_MouseMotionEvent = Struct "SDL_MouseMotionEvent" [("type", Int), ("timestamp", Int), ("windowID", Int), ("which", Int), ("state", Int), ("x", Bits16), ("y", Bits16), ("xrel", Bits16), ("yrel", Bits16)]
@@ -80,13 +80,13 @@ SDL_ControllerTouchpadEvent : Type
 SDL_ControllerTouchpadEvent = Struct "SDL_ControllerTouchpadEvent" [("type", Int), ("timestamp", Int), ("which", Bits16), ("touchpad", Bits16), ("finger", Bits16), ("x", Double), ("y", Double), ("pressure", Double)]
 
 SDL_ControllerSensorEvent : Type
-SDL_ControllerSensorEvent = Struct "SDL_ControllerSensorEvent" [("type", Int), ("timestamp", Int), ("which", Bits16), ("sensor", Bits16), ("data", [Double]), ("timestamp_us", Bits64)]
+SDL_ControllerSensorEvent = Struct "SDL_ControllerSensorEvent" [("type", Int), ("timestamp", Int), ("which", Bits16), ("sensor", Bits16), ("data", Ptr Double), ("timestamp_us", Bits64)]
 
 SDL_AudioDeviceEvent : Type
 SDL_AudioDeviceEvent = Struct "SDL_AudioDeviceEvent" [("type", Int), ("timestamp", Int), ("which", Int), ("iscapture", Bits8), ("padding1", Bits8), ("padding2", Bits8), ("padding3", Bits8)]
 
 SDL_SensorEvent : Type
-SDL_SensorEvent = Struct "SDL_SensorEvent" [("type", Int), ("timestamp", Int), ("which", Bits16), ("data", [Double]), ("timestamp_us", Bits64)]
+SDL_SensorEvent = Struct "SDL_SensorEvent" [("type", Int), ("timestamp", Int), ("which", Bits16), ("data", Ptr Double), ("timestamp_us", Bits64)]
 
 SDL_QuitEvent : Type
 SDL_QuitEvent = Struct "SDL_QuitEvent" [("type", Int), ("timestamp", Int)]
@@ -110,7 +110,111 @@ SDL_DropEvent : Type
 SDL_DropEvent = Struct "SDL_DropEvent" [("type", Int), ("timestamp", Int), ("file", String), ("windowID", Int)]
 
 SDL_Event : Type
-SDL_Event = Struct "SDL_Event" [("type", Int), ("common", SDL_CommonEvent), ("display", SDL_DisplayEvent), ("window", SDL_WindowEvent), ("key", SDL_KeyboardEvent), ("edit", SDL_TextEditingEvent), ("editExt", SDL_TextEditingExtEvent), ("text", SDL_TextInputEvent), ("motion", SDL_MouseMotionEvent), ("button", SDL_MouseButtonEvent), ("wheel", SDL_MouseWheelEvent), ("jaxis", SDL_JoyAxisEvent), ("jball", SDL_JoyBallEvent), ("jhat", SDL_JoyHatEvent), ("jbutton", SDL_JoyButtonEvent), ("jdevice", SDL_JoyDeviceEvent), ("jbattery", SDL_JoyBatteryEvent), ("caxis", SDL_ControllerAxisEvent), ("cbutton", SDL_ControllerButtonEvent), ("cdevice", SDL_ControllerDeviceEvent), ("ctouchpad", SDL_ControllerTouchpadEvent), ("csensor", SDL_ControllerSensorEvent), ("adevice", SDL_AudioDeviceEvent), ("sensor", SDL_SensorEvent), ("quit", SDL_QuitEvent), ("user", SDL_UserEvent), ("syswm", SDL_SysWMEvent), ("tfinger", SDL_TouchFingerEvent), ("mgesture", SDL_MultiGestureEvent), ("dgesture", SDL_DollarGestureEvent), ("drop", SDL_DropEvent), ("padding", [Bits8])]
+SDL_Event = GCAnyPtr
+
+MkSDL_Event : SDL_Event
+MkSDL_Event = unsafePerformIO (Mk_) where
+  Mk_ : IO GCAnyPtr
+  Mk_ = do
+    res <- malloc 56
+    onCollectAny res free
+
+SDL_Event_type : SDL_Event -> Int
+SDL_Event_type u = u
+
+SDL_Event_common : SDL_Event -> SDL_CommonEvent
+SDL_Event_common u = u
+
+SDL_Event_display : SDL_Event -> SDL_DisplayEvent
+SDL_Event_display u = u
+
+SDL_Event_window : SDL_Event -> SDL_WindowEvent
+SDL_Event_window u = u
+
+SDL_Event_key : SDL_Event -> SDL_KeyboardEvent
+SDL_Event_key u = u
+
+SDL_Event_edit : SDL_Event -> SDL_TextEditingEvent
+SDL_Event_edit u = u
+
+SDL_Event_editExt : SDL_Event -> SDL_TextEditingExtEvent
+SDL_Event_editExt u = u
+
+SDL_Event_text : SDL_Event -> SDL_TextInputEvent
+SDL_Event_text u = u
+
+SDL_Event_motion : SDL_Event -> SDL_MouseMotionEvent
+SDL_Event_motion u = u
+
+SDL_Event_button : SDL_Event -> SDL_MouseButtonEvent
+SDL_Event_button u = u
+
+SDL_Event_wheel : SDL_Event -> SDL_MouseWheelEvent
+SDL_Event_wheel u = u
+
+SDL_Event_jaxis : SDL_Event -> SDL_JoyAxisEvent
+SDL_Event_jaxis u = u
+
+SDL_Event_jball : SDL_Event -> SDL_JoyBallEvent
+SDL_Event_jball u = u
+
+SDL_Event_jhat : SDL_Event -> SDL_JoyHatEvent
+SDL_Event_jhat u = u
+
+SDL_Event_jbutton : SDL_Event -> SDL_JoyButtonEvent
+SDL_Event_jbutton u = u
+
+SDL_Event_jdevice : SDL_Event -> SDL_JoyDeviceEvent
+SDL_Event_jdevice u = u
+
+SDL_Event_jbattery : SDL_Event -> SDL_JoyBatteryEvent
+SDL_Event_jbattery u = u
+
+SDL_Event_caxis : SDL_Event -> SDL_ControllerAxisEvent
+SDL_Event_caxis u = u
+
+SDL_Event_cbutton : SDL_Event -> SDL_ControllerButtonEvent
+SDL_Event_cbutton u = u
+
+SDL_Event_cdevice : SDL_Event -> SDL_ControllerDeviceEvent
+SDL_Event_cdevice u = u
+
+SDL_Event_ctouchpad : SDL_Event -> SDL_ControllerTouchpadEvent
+SDL_Event_ctouchpad u = u
+
+SDL_Event_csensor : SDL_Event -> SDL_ControllerSensorEvent
+SDL_Event_csensor u = u
+
+SDL_Event_adevice : SDL_Event -> SDL_AudioDeviceEvent
+SDL_Event_adevice u = u
+
+SDL_Event_sensor : SDL_Event -> SDL_SensorEvent
+SDL_Event_sensor u = u
+
+SDL_Event_quit : SDL_Event -> SDL_QuitEvent
+SDL_Event_quit u = u
+
+SDL_Event_user : SDL_Event -> SDL_UserEvent
+SDL_Event_user u = u
+
+SDL_Event_syswm : SDL_Event -> SDL_SysWMEvent
+SDL_Event_syswm u = u
+
+SDL_Event_tfinger : SDL_Event -> SDL_TouchFingerEvent
+SDL_Event_tfinger u = u
+
+SDL_Event_mgesture : SDL_Event -> SDL_MultiGestureEvent
+SDL_Event_mgesture u = u
+
+SDL_Event_dgesture : SDL_Event -> SDL_DollarGestureEvent
+SDL_Event_dgesture u = u
+
+SDL_Event_drop : SDL_Event -> SDL_DropEvent
+SDL_Event_drop u = u
+
+SDL_Event_padding : SDL_Event -> Ptr Bits8
+SDL_Event_padding u = u
+
 
 %foreign "C:SDL_CreateWindow,SDL2"
 export
