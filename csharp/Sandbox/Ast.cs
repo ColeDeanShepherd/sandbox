@@ -39,7 +39,7 @@ public record StructType(Struct Struct) : DataType;
 public record UnionType(Union Union) : DataType;
 public record EnumType(Enum Enum) : DataType;
 
-public record Struct(string Name, List<Field> Fields);
+public record Struct(string Name, List<Field> Fields, uint SizeInBytes);
 public record Union(string Name, List<Field> Fields, uint SizeInBytes);
 public record Enum(string Name);
 public record Field(string Name, DataType Type, uint OffsetInBytes);

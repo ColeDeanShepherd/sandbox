@@ -1,5 +1,7 @@
 module Main
 
+import System.FFI
+import Core
 import SDL2
 
 -- To-Do
@@ -50,6 +52,16 @@ main = do
 
     surf <- primIO (SDL_GetWindowSurface win)
     y <- primIO (SDL_UpdateWindowSurface win)
+
+    fdsa <- pure (MkSDL_Event)
+    asdf <- primIO (SDL_PollEvent (unsafeCast fdsa))
+
+    eventType <- io_pure (SDL_Event_type fdsa)
+    putStrLn (show eventType)
+
+    r <- pure (MkSDL_Rect)
+    setField r "x" (the Int 40)
+    x <- primIO (SDL_RenderDrawRect rend (unsafeCast r))
 
     res <- primIO (SDL_RenderClear rend)
     primIO (SDL_RenderPresent rend)

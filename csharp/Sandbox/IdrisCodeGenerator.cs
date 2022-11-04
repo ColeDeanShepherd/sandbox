@@ -25,8 +25,9 @@ public static class IdrisCodeGenerator
         foreach (var i in imports)
         {
             stringBuilder.AppendLine($"import {i}");
-            stringBuilder.AppendLine();
         }
+
+        stringBuilder.AppendLine();
 
         foreach (var c in constants)
         {
@@ -54,16 +55,11 @@ public static class IdrisCodeGenerator
 
         foreach (var function in program.Functions.Values)
         {
-            WriteFunction(stringBuilder, function);
+            WriteFunction(stringBuilder, moduleName, function);
             stringBuilder.AppendLine();
         }
 
         return stringBuilder.ToString().ReplaceLineEndings("\n");
-    }
-
-    public static string GenerateCLibSourceCode(Program program)
-    {
-        return "";
     }
 
     public static void WriteStruct(StringBuilder stringBuilder, Struct node)
@@ -72,8 +68,21 @@ public static class IdrisCodeGenerator
             node.Fields
                 .Select(f => $"(\"{f.Name}\", {ToIdrisTypeString(f.Type)})");
 
+        stringBuilder.AppendLine("export");
         stringBuilder.AppendLine($"{node.Name} : Type");
         stringBuilder.AppendLine($"{node.Name} = Struct \"{node.Name}\" [{string.Join(", ", fields)}]");
+        stringBuilder.AppendLine();
+
+        stringBuilder.AppendLine("export");
+        stringBuilder.AppendLine($"Mk{node.Name} : {node.Name}");
+        stringBuilder.AppendLine($"Mk{node.Name} = unsafeCast (unsafePerformIO (Mk_)) where");
+        stringBuilder.AppendLine(
+@$"  Mk_ : IO GCAnyPtr
+  Mk_ = do
+    res <- malloc {node.SizeInBytes}
+    io_pure (unsafeCast res)
+    -- onCollectAny res free");
+        stringBuilder.AppendLine();
     }
 
     public static void WriteUnion(StringBuilder stringBuilder, Union node)
@@ -82,43 +91,57 @@ public static class IdrisCodeGenerator
             node.Fields
                 .Select(f => $"(\"{f.Name}\", {ToIdrisTypeString(f.Type)})");
 
+        stringBuilder.AppendLine("export");
         stringBuilder.AppendLine($"{node.Name} : Type");
         stringBuilder.AppendLine($"{node.Name} = GCAnyPtr");
         stringBuilder.AppendLine();
 
+        stringBuilder.AppendLine("export");
         stringBuilder.AppendLine($"Mk{node.Name} : {node.Name}");
         stringBuilder.AppendLine($"Mk{node.Name} = unsafePerformIO (Mk_) where");
         stringBuilder.AppendLine(
 @$"  Mk_ : IO GCAnyPtr
   Mk_ = do
     res <- malloc {node.SizeInBytes}
-    onCollectAny res free");
+    io_pure (unsafeCast res)
+    -- onCollectAny res free");
         stringBuilder.AppendLine();
 
         foreach (var field in node.Fields)
         {
+            stringBuilder.AppendLine("export");
             stringBuilder.AppendLine($"{node.Name}_{field.Name} : {node.Name} -> {ToIdrisTypeString(field.Type)}");
-            stringBuilder.AppendLine($"{node.Name}_{field.Name} u = u");
+
+            if ((field.Type == DataTypes.SSize) || (field.Type == DataTypes.USize))
+            {
+                stringBuilder.AppendLine($"{node.Name}_{field.Name} u = unsafePerformIO (primIO (deref_as_int (unsafeCast u)))");
+            }
+            else
+            {
+                stringBuilder.AppendLine($"{node.Name}_{field.Name} = believe_me");
+            }
+
             stringBuilder.AppendLine();
         }
     }
 
     public static void WriteEnum(StringBuilder stringBuilder, Enum node)
     {
+        stringBuilder.AppendLine("export");
         stringBuilder.AppendLine($"{node.Name} : Type");
         stringBuilder.AppendLine($"{node.Name} = Int");
 
         //stringBuilder.AppendLine($"data {node.Name} = {string.Join(" | ", node.)}");
     }
 
-    public static void WriteFunction(StringBuilder stringBuilder, Function node)
+    public static void WriteFunction(StringBuilder stringBuilder, string moduleName, Function node)
     {
         IEnumerable<string> paramAndReturnTypes =
             node.Parameters
                 .Select(p => ToIdrisTypeString(p.Type))
                 .Concat(new[] { $"PrimIO {ToIdrisTypeString(node.ReturnType)}" });
 
-        stringBuilder.AppendLine($"%foreign \"C:{node.Name},SDL2\"");
+        stringBuilder.AppendLine($"%foreign \"C:{node.Name},{moduleName}\"");
         stringBuilder.AppendLine("export");
         stringBuilder.AppendLine($"{node.Name} : {string.Join(" -> ", paramAndReturnTypes)}");
     }

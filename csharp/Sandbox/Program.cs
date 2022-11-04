@@ -4,13 +4,34 @@ public static class Cli
 {
     public static async Task Main(string[] args)
     {
+        //await GenerateIdris2Bindings(
+        //    @"C:\Users\R_SD\dev\personal\sandbox\idris2\examples\ffilib.c",
+        //    "ffilib",
+        //    @"C:\Users\R_SD\dev\personal\sandbox\idris2\examples",
+        //    new()
+        //    {
+        //    },
+        //    new()
+        //    {
+        //        "deref_as_int",
+        //        "cast_to_anyptr"
+        //    },
+        //    new()
+        //    {
+        //        "System.FFI"
+        //    },
+        //    new()
+        //    {
+        //    });
+
         await GenerateIdris2Bindings(
             "C:/Users/R_SD/dev/personal/SDL/include/SDL.h",
             "SDL2",
             @"C:\Users\R_SD\dev\personal\sandbox\idris2\examples",
             new()
             {
-                "SDL_Event"
+                "SDL_Event",
+                "SDL_Rect"
             },
             new()
             {
@@ -23,11 +44,14 @@ public static class Cli
                 "SDL_RenderSetLogicalSize",
                 "SDL_RenderClear",
                 "SDL_RenderPresent",
+                "SDL_RenderDrawRect",
                 "SDL_PollEvent"
             },
             new()
             {
-                "System.FFI"
+                "Core",
+                "System.FFI",
+                "Ffilib"
             },
             new()
             {
@@ -49,8 +73,5 @@ public static class Cli
 
         string idrisSourceCode = IdrisCodeGenerator.GenerateIdrisSourceCode(moduleName, program, imports, constants);
         await File.WriteAllTextAsync(Path.Combine(outDirectoryPath, $"{moduleName}.idr"), idrisSourceCode);
-
-        string cSourceCode = IdrisCodeGenerator.GenerateCLibSourceCode(program);
-        await File.WriteAllTextAsync(Path.Combine(outDirectoryPath, $"{moduleName}.c"), cSourceCode);
     }
 }

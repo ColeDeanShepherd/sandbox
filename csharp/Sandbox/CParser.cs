@@ -124,7 +124,8 @@ public static class CParser
     public static Struct ParseStruct(CParserContext context, CXCursor cursor) =>
         new Struct(
             cursor.DisplayName.CString,
-            cursor.GetFields().Select(c => ParseField(context, c)).ToList());
+            cursor.GetFields().Select(c => ParseField(context, c)).ToList(),
+            (uint)cursor.Type.SizeOf);
 
     public static Union ParseUnion(CParserContext context, CXCursor cursor) =>
         new Union(
@@ -157,12 +158,12 @@ public static class CParser
                 CXTypeKind.CXType_UChar => DataTypes.U8,
                 CXTypeKind.CXType_Short => DataTypes.S16,
                 CXTypeKind.CXType_UShort => DataTypes.U16,
-                CXTypeKind.CXType_Int => DataTypes.S16,
+                CXTypeKind.CXType_Int => DataTypes.SSize,
+                CXTypeKind.CXType_UInt => DataTypes.USize,
                 CXTypeKind.CXType_Long => DataTypes.U32,
                 CXTypeKind.CXType_ULong => DataTypes.S32,
                 CXTypeKind.CXType_LongLong => DataTypes.U64,
                 CXTypeKind.CXType_ULongLong => DataTypes.S64,
-                CXTypeKind.CXType_UInt => DataTypes.USize,
                 CXTypeKind.CXType_Float => DataTypes.Float,
                 _ => throw new NotImplementedException()
             };
