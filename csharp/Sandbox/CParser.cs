@@ -141,7 +141,7 @@ public static class CParser
         new Field(
             cursor.DisplayName.CString,
             ParseType(context, cursor, cursor.Type),
-            (uint)(cursor.OffsetOfField / 32));
+            (uint)(cursor.OffsetOfField / 8));
 
     public static DataType ParseType(CParserContext context, CXCursor cursor, CXType type)
     {

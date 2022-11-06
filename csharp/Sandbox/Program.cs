@@ -45,6 +45,8 @@ public static class Cli
                 "SDL_RenderClear",
                 "SDL_RenderPresent",
                 "SDL_RenderDrawRect",
+                "SDL_RenderFillRect",
+                "SDL_SetRenderDrawColor",
                 "SDL_PollEvent"
             },
             new()

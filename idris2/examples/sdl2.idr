@@ -33,6 +33,38 @@ MkSDL_Rect = unsafeCast (unsafePerformIO (Mk_)) where
     io_pure (unsafeCast res)
     -- onCollectAny res free
 
+export
+SDL_Rect_get_x : SDL_Rect -> Int
+SDL_Rect_get_x x = deref_as_int (ptr_add_byte_offset (unsafeCast x) 0)
+
+export
+SDL_Rect_set_x : SDL_Rect -> Int -> PrimIO ()
+SDL_Rect_set_x x v = ptr_set_as_int (ptr_add_byte_offset (unsafeCast x) 0) v
+
+export
+SDL_Rect_get_y : SDL_Rect -> Int
+SDL_Rect_get_y x = deref_as_int (ptr_add_byte_offset (unsafeCast x) 4)
+
+export
+SDL_Rect_set_y : SDL_Rect -> Int -> PrimIO ()
+SDL_Rect_set_y x v = ptr_set_as_int (ptr_add_byte_offset (unsafeCast x) 4) v
+
+export
+SDL_Rect_get_w : SDL_Rect -> Int
+SDL_Rect_get_w x = deref_as_int (ptr_add_byte_offset (unsafeCast x) 8)
+
+export
+SDL_Rect_set_w : SDL_Rect -> Int -> PrimIO ()
+SDL_Rect_set_w x v = ptr_set_as_int (ptr_add_byte_offset (unsafeCast x) 8) v
+
+export
+SDL_Rect_get_h : SDL_Rect -> Int
+SDL_Rect_get_h x = deref_as_int (ptr_add_byte_offset (unsafeCast x) 12)
+
+export
+SDL_Rect_set_h : SDL_Rect -> Int -> PrimIO ()
+SDL_Rect_set_h x v = ptr_set_as_int (ptr_add_byte_offset (unsafeCast x) 12) v
+
 
 export
 SDL_CommonEvent : Type
@@ -61,6 +93,14 @@ MkSDL_DisplayEvent = unsafeCast (unsafePerformIO (Mk_)) where
     io_pure (unsafeCast res)
     -- onCollectAny res free
 
+export
+SDL_DisplayEvent_get_data1 : SDL_DisplayEvent -> Int
+SDL_DisplayEvent_get_data1 x = deref_as_int (ptr_add_byte_offset (unsafeCast x) 16)
+
+export
+SDL_DisplayEvent_set_data1 : SDL_DisplayEvent -> Int -> PrimIO ()
+SDL_DisplayEvent_set_data1 x v = ptr_set_as_int (ptr_add_byte_offset (unsafeCast x) 16) v
+
 
 export
 SDL_WindowEvent : Type
@@ -75,6 +115,22 @@ MkSDL_WindowEvent = unsafeCast (unsafePerformIO (Mk_)) where
     io_pure (unsafeCast res)
     -- onCollectAny res free
 
+export
+SDL_WindowEvent_get_data1 : SDL_WindowEvent -> Int
+SDL_WindowEvent_get_data1 x = deref_as_int (ptr_add_byte_offset (unsafeCast x) 16)
+
+export
+SDL_WindowEvent_set_data1 : SDL_WindowEvent -> Int -> PrimIO ()
+SDL_WindowEvent_set_data1 x v = ptr_set_as_int (ptr_add_byte_offset (unsafeCast x) 16) v
+
+export
+SDL_WindowEvent_get_data2 : SDL_WindowEvent -> Int
+SDL_WindowEvent_get_data2 x = deref_as_int (ptr_add_byte_offset (unsafeCast x) 20)
+
+export
+SDL_WindowEvent_set_data2 : SDL_WindowEvent -> Int -> PrimIO ()
+SDL_WindowEvent_set_data2 x v = ptr_set_as_int (ptr_add_byte_offset (unsafeCast x) 20) v
+
 
 export
 SDL_Keysym : Type
@@ -88,6 +144,14 @@ MkSDL_Keysym = unsafeCast (unsafePerformIO (Mk_)) where
     res <- malloc 16
     io_pure (unsafeCast res)
     -- onCollectAny res free
+
+export
+SDL_Keysym_get_sym : SDL_Keysym -> Int
+SDL_Keysym_get_sym x = deref_as_int (ptr_add_byte_offset (unsafeCast x) 4)
+
+export
+SDL_Keysym_set_sym : SDL_Keysym -> Int -> PrimIO ()
+SDL_Keysym_set_sym x v = ptr_set_as_int (ptr_add_byte_offset (unsafeCast x) 4) v
 
 
 export
@@ -117,6 +181,22 @@ MkSDL_TextEditingEvent = unsafeCast (unsafePerformIO (Mk_)) where
     io_pure (unsafeCast res)
     -- onCollectAny res free
 
+export
+SDL_TextEditingEvent_get_start : SDL_TextEditingEvent -> Int
+SDL_TextEditingEvent_get_start x = deref_as_int (ptr_add_byte_offset (unsafeCast x) 44)
+
+export
+SDL_TextEditingEvent_set_start : SDL_TextEditingEvent -> Int -> PrimIO ()
+SDL_TextEditingEvent_set_start x v = ptr_set_as_int (ptr_add_byte_offset (unsafeCast x) 44) v
+
+export
+SDL_TextEditingEvent_get_length : SDL_TextEditingEvent -> Int
+SDL_TextEditingEvent_get_length x = deref_as_int (ptr_add_byte_offset (unsafeCast x) 48)
+
+export
+SDL_TextEditingEvent_set_length : SDL_TextEditingEvent -> Int -> PrimIO ()
+SDL_TextEditingEvent_set_length x v = ptr_set_as_int (ptr_add_byte_offset (unsafeCast x) 48) v
+
 
 export
 SDL_TextEditingExtEvent : Type
@@ -130,6 +210,22 @@ MkSDL_TextEditingExtEvent = unsafeCast (unsafePerformIO (Mk_)) where
     res <- malloc 32
     io_pure (unsafeCast res)
     -- onCollectAny res free
+
+export
+SDL_TextEditingExtEvent_get_start : SDL_TextEditingExtEvent -> Int
+SDL_TextEditingExtEvent_get_start x = deref_as_int (ptr_add_byte_offset (unsafeCast x) 24)
+
+export
+SDL_TextEditingExtEvent_set_start : SDL_TextEditingExtEvent -> Int -> PrimIO ()
+SDL_TextEditingExtEvent_set_start x v = ptr_set_as_int (ptr_add_byte_offset (unsafeCast x) 24) v
+
+export
+SDL_TextEditingExtEvent_get_length : SDL_TextEditingExtEvent -> Int
+SDL_TextEditingExtEvent_get_length x = deref_as_int (ptr_add_byte_offset (unsafeCast x) 28)
+
+export
+SDL_TextEditingExtEvent_set_length : SDL_TextEditingExtEvent -> Int -> PrimIO ()
+SDL_TextEditingExtEvent_set_length x v = ptr_set_as_int (ptr_add_byte_offset (unsafeCast x) 28) v
 
 
 export
@@ -159,6 +255,38 @@ MkSDL_MouseMotionEvent = unsafeCast (unsafePerformIO (Mk_)) where
     io_pure (unsafeCast res)
     -- onCollectAny res free
 
+export
+SDL_MouseMotionEvent_get_x : SDL_MouseMotionEvent -> Int
+SDL_MouseMotionEvent_get_x x = deref_as_int (ptr_add_byte_offset (unsafeCast x) 20)
+
+export
+SDL_MouseMotionEvent_set_x : SDL_MouseMotionEvent -> Int -> PrimIO ()
+SDL_MouseMotionEvent_set_x x v = ptr_set_as_int (ptr_add_byte_offset (unsafeCast x) 20) v
+
+export
+SDL_MouseMotionEvent_get_y : SDL_MouseMotionEvent -> Int
+SDL_MouseMotionEvent_get_y x = deref_as_int (ptr_add_byte_offset (unsafeCast x) 24)
+
+export
+SDL_MouseMotionEvent_set_y : SDL_MouseMotionEvent -> Int -> PrimIO ()
+SDL_MouseMotionEvent_set_y x v = ptr_set_as_int (ptr_add_byte_offset (unsafeCast x) 24) v
+
+export
+SDL_MouseMotionEvent_get_xrel : SDL_MouseMotionEvent -> Int
+SDL_MouseMotionEvent_get_xrel x = deref_as_int (ptr_add_byte_offset (unsafeCast x) 28)
+
+export
+SDL_MouseMotionEvent_set_xrel : SDL_MouseMotionEvent -> Int -> PrimIO ()
+SDL_MouseMotionEvent_set_xrel x v = ptr_set_as_int (ptr_add_byte_offset (unsafeCast x) 28) v
+
+export
+SDL_MouseMotionEvent_get_yrel : SDL_MouseMotionEvent -> Int
+SDL_MouseMotionEvent_get_yrel x = deref_as_int (ptr_add_byte_offset (unsafeCast x) 32)
+
+export
+SDL_MouseMotionEvent_set_yrel : SDL_MouseMotionEvent -> Int -> PrimIO ()
+SDL_MouseMotionEvent_set_yrel x v = ptr_set_as_int (ptr_add_byte_offset (unsafeCast x) 32) v
+
 
 export
 SDL_MouseButtonEvent : Type
@@ -172,6 +300,22 @@ MkSDL_MouseButtonEvent = unsafeCast (unsafePerformIO (Mk_)) where
     res <- malloc 28
     io_pure (unsafeCast res)
     -- onCollectAny res free
+
+export
+SDL_MouseButtonEvent_get_x : SDL_MouseButtonEvent -> Int
+SDL_MouseButtonEvent_get_x x = deref_as_int (ptr_add_byte_offset (unsafeCast x) 20)
+
+export
+SDL_MouseButtonEvent_set_x : SDL_MouseButtonEvent -> Int -> PrimIO ()
+SDL_MouseButtonEvent_set_x x v = ptr_set_as_int (ptr_add_byte_offset (unsafeCast x) 20) v
+
+export
+SDL_MouseButtonEvent_get_y : SDL_MouseButtonEvent -> Int
+SDL_MouseButtonEvent_get_y x = deref_as_int (ptr_add_byte_offset (unsafeCast x) 24)
+
+export
+SDL_MouseButtonEvent_set_y : SDL_MouseButtonEvent -> Int -> PrimIO ()
+SDL_MouseButtonEvent_set_y x v = ptr_set_as_int (ptr_add_byte_offset (unsafeCast x) 24) v
 
 
 export
@@ -187,6 +331,38 @@ MkSDL_MouseWheelEvent = unsafeCast (unsafePerformIO (Mk_)) where
     io_pure (unsafeCast res)
     -- onCollectAny res free
 
+export
+SDL_MouseWheelEvent_get_x : SDL_MouseWheelEvent -> Int
+SDL_MouseWheelEvent_get_x x = deref_as_int (ptr_add_byte_offset (unsafeCast x) 16)
+
+export
+SDL_MouseWheelEvent_set_x : SDL_MouseWheelEvent -> Int -> PrimIO ()
+SDL_MouseWheelEvent_set_x x v = ptr_set_as_int (ptr_add_byte_offset (unsafeCast x) 16) v
+
+export
+SDL_MouseWheelEvent_get_y : SDL_MouseWheelEvent -> Int
+SDL_MouseWheelEvent_get_y x = deref_as_int (ptr_add_byte_offset (unsafeCast x) 20)
+
+export
+SDL_MouseWheelEvent_set_y : SDL_MouseWheelEvent -> Int -> PrimIO ()
+SDL_MouseWheelEvent_set_y x v = ptr_set_as_int (ptr_add_byte_offset (unsafeCast x) 20) v
+
+export
+SDL_MouseWheelEvent_get_mouseX : SDL_MouseWheelEvent -> Int
+SDL_MouseWheelEvent_get_mouseX x = deref_as_int (ptr_add_byte_offset (unsafeCast x) 36)
+
+export
+SDL_MouseWheelEvent_set_mouseX : SDL_MouseWheelEvent -> Int -> PrimIO ()
+SDL_MouseWheelEvent_set_mouseX x v = ptr_set_as_int (ptr_add_byte_offset (unsafeCast x) 36) v
+
+export
+SDL_MouseWheelEvent_get_mouseY : SDL_MouseWheelEvent -> Int
+SDL_MouseWheelEvent_get_mouseY x = deref_as_int (ptr_add_byte_offset (unsafeCast x) 40)
+
+export
+SDL_MouseWheelEvent_set_mouseY : SDL_MouseWheelEvent -> Int -> PrimIO ()
+SDL_MouseWheelEvent_set_mouseY x v = ptr_set_as_int (ptr_add_byte_offset (unsafeCast x) 40) v
+
 
 export
 SDL_JoyAxisEvent : Type
@@ -200,6 +376,14 @@ MkSDL_JoyAxisEvent = unsafeCast (unsafePerformIO (Mk_)) where
     res <- malloc 20
     io_pure (unsafeCast res)
     -- onCollectAny res free
+
+export
+SDL_JoyAxisEvent_get_which : SDL_JoyAxisEvent -> Int
+SDL_JoyAxisEvent_get_which x = deref_as_int (ptr_add_byte_offset (unsafeCast x) 8)
+
+export
+SDL_JoyAxisEvent_set_which : SDL_JoyAxisEvent -> Int -> PrimIO ()
+SDL_JoyAxisEvent_set_which x v = ptr_set_as_int (ptr_add_byte_offset (unsafeCast x) 8) v
 
 
 export
@@ -215,6 +399,14 @@ MkSDL_JoyBallEvent = unsafeCast (unsafePerformIO (Mk_)) where
     io_pure (unsafeCast res)
     -- onCollectAny res free
 
+export
+SDL_JoyBallEvent_get_which : SDL_JoyBallEvent -> Int
+SDL_JoyBallEvent_get_which x = deref_as_int (ptr_add_byte_offset (unsafeCast x) 8)
+
+export
+SDL_JoyBallEvent_set_which : SDL_JoyBallEvent -> Int -> PrimIO ()
+SDL_JoyBallEvent_set_which x v = ptr_set_as_int (ptr_add_byte_offset (unsafeCast x) 8) v
+
 
 export
 SDL_JoyHatEvent : Type
@@ -228,6 +420,14 @@ MkSDL_JoyHatEvent = unsafeCast (unsafePerformIO (Mk_)) where
     res <- malloc 16
     io_pure (unsafeCast res)
     -- onCollectAny res free
+
+export
+SDL_JoyHatEvent_get_which : SDL_JoyHatEvent -> Int
+SDL_JoyHatEvent_get_which x = deref_as_int (ptr_add_byte_offset (unsafeCast x) 8)
+
+export
+SDL_JoyHatEvent_set_which : SDL_JoyHatEvent -> Int -> PrimIO ()
+SDL_JoyHatEvent_set_which x v = ptr_set_as_int (ptr_add_byte_offset (unsafeCast x) 8) v
 
 
 export
@@ -243,6 +443,14 @@ MkSDL_JoyButtonEvent = unsafeCast (unsafePerformIO (Mk_)) where
     io_pure (unsafeCast res)
     -- onCollectAny res free
 
+export
+SDL_JoyButtonEvent_get_which : SDL_JoyButtonEvent -> Int
+SDL_JoyButtonEvent_get_which x = deref_as_int (ptr_add_byte_offset (unsafeCast x) 8)
+
+export
+SDL_JoyButtonEvent_set_which : SDL_JoyButtonEvent -> Int -> PrimIO ()
+SDL_JoyButtonEvent_set_which x v = ptr_set_as_int (ptr_add_byte_offset (unsafeCast x) 8) v
+
 
 export
 SDL_JoyDeviceEvent : Type
@@ -256,6 +464,14 @@ MkSDL_JoyDeviceEvent = unsafeCast (unsafePerformIO (Mk_)) where
     res <- malloc 12
     io_pure (unsafeCast res)
     -- onCollectAny res free
+
+export
+SDL_JoyDeviceEvent_get_which : SDL_JoyDeviceEvent -> Int
+SDL_JoyDeviceEvent_get_which x = deref_as_int (ptr_add_byte_offset (unsafeCast x) 8)
+
+export
+SDL_JoyDeviceEvent_set_which : SDL_JoyDeviceEvent -> Int -> PrimIO ()
+SDL_JoyDeviceEvent_set_which x v = ptr_set_as_int (ptr_add_byte_offset (unsafeCast x) 8) v
 
 
 export
@@ -271,6 +487,14 @@ MkSDL_JoyBatteryEvent = unsafeCast (unsafePerformIO (Mk_)) where
     io_pure (unsafeCast res)
     -- onCollectAny res free
 
+export
+SDL_JoyBatteryEvent_get_which : SDL_JoyBatteryEvent -> Int
+SDL_JoyBatteryEvent_get_which x = deref_as_int (ptr_add_byte_offset (unsafeCast x) 8)
+
+export
+SDL_JoyBatteryEvent_set_which : SDL_JoyBatteryEvent -> Int -> PrimIO ()
+SDL_JoyBatteryEvent_set_which x v = ptr_set_as_int (ptr_add_byte_offset (unsafeCast x) 8) v
+
 
 export
 SDL_ControllerAxisEvent : Type
@@ -284,6 +508,14 @@ MkSDL_ControllerAxisEvent = unsafeCast (unsafePerformIO (Mk_)) where
     res <- malloc 20
     io_pure (unsafeCast res)
     -- onCollectAny res free
+
+export
+SDL_ControllerAxisEvent_get_which : SDL_ControllerAxisEvent -> Int
+SDL_ControllerAxisEvent_get_which x = deref_as_int (ptr_add_byte_offset (unsafeCast x) 8)
+
+export
+SDL_ControllerAxisEvent_set_which : SDL_ControllerAxisEvent -> Int -> PrimIO ()
+SDL_ControllerAxisEvent_set_which x v = ptr_set_as_int (ptr_add_byte_offset (unsafeCast x) 8) v
 
 
 export
@@ -299,6 +531,14 @@ MkSDL_ControllerButtonEvent = unsafeCast (unsafePerformIO (Mk_)) where
     io_pure (unsafeCast res)
     -- onCollectAny res free
 
+export
+SDL_ControllerButtonEvent_get_which : SDL_ControllerButtonEvent -> Int
+SDL_ControllerButtonEvent_get_which x = deref_as_int (ptr_add_byte_offset (unsafeCast x) 8)
+
+export
+SDL_ControllerButtonEvent_set_which : SDL_ControllerButtonEvent -> Int -> PrimIO ()
+SDL_ControllerButtonEvent_set_which x v = ptr_set_as_int (ptr_add_byte_offset (unsafeCast x) 8) v
+
 
 export
 SDL_ControllerDeviceEvent : Type
@@ -312,6 +552,14 @@ MkSDL_ControllerDeviceEvent = unsafeCast (unsafePerformIO (Mk_)) where
     res <- malloc 12
     io_pure (unsafeCast res)
     -- onCollectAny res free
+
+export
+SDL_ControllerDeviceEvent_get_which : SDL_ControllerDeviceEvent -> Int
+SDL_ControllerDeviceEvent_get_which x = deref_as_int (ptr_add_byte_offset (unsafeCast x) 8)
+
+export
+SDL_ControllerDeviceEvent_set_which : SDL_ControllerDeviceEvent -> Int -> PrimIO ()
+SDL_ControllerDeviceEvent_set_which x v = ptr_set_as_int (ptr_add_byte_offset (unsafeCast x) 8) v
 
 
 export
@@ -327,6 +575,30 @@ MkSDL_ControllerTouchpadEvent = unsafeCast (unsafePerformIO (Mk_)) where
     io_pure (unsafeCast res)
     -- onCollectAny res free
 
+export
+SDL_ControllerTouchpadEvent_get_which : SDL_ControllerTouchpadEvent -> Int
+SDL_ControllerTouchpadEvent_get_which x = deref_as_int (ptr_add_byte_offset (unsafeCast x) 8)
+
+export
+SDL_ControllerTouchpadEvent_set_which : SDL_ControllerTouchpadEvent -> Int -> PrimIO ()
+SDL_ControllerTouchpadEvent_set_which x v = ptr_set_as_int (ptr_add_byte_offset (unsafeCast x) 8) v
+
+export
+SDL_ControllerTouchpadEvent_get_touchpad : SDL_ControllerTouchpadEvent -> Int
+SDL_ControllerTouchpadEvent_get_touchpad x = deref_as_int (ptr_add_byte_offset (unsafeCast x) 12)
+
+export
+SDL_ControllerTouchpadEvent_set_touchpad : SDL_ControllerTouchpadEvent -> Int -> PrimIO ()
+SDL_ControllerTouchpadEvent_set_touchpad x v = ptr_set_as_int (ptr_add_byte_offset (unsafeCast x) 12) v
+
+export
+SDL_ControllerTouchpadEvent_get_finger : SDL_ControllerTouchpadEvent -> Int
+SDL_ControllerTouchpadEvent_get_finger x = deref_as_int (ptr_add_byte_offset (unsafeCast x) 16)
+
+export
+SDL_ControllerTouchpadEvent_set_finger : SDL_ControllerTouchpadEvent -> Int -> PrimIO ()
+SDL_ControllerTouchpadEvent_set_finger x v = ptr_set_as_int (ptr_add_byte_offset (unsafeCast x) 16) v
+
 
 export
 SDL_ControllerSensorEvent : Type
@@ -340,6 +612,22 @@ MkSDL_ControllerSensorEvent = unsafeCast (unsafePerformIO (Mk_)) where
     res <- malloc 40
     io_pure (unsafeCast res)
     -- onCollectAny res free
+
+export
+SDL_ControllerSensorEvent_get_which : SDL_ControllerSensorEvent -> Int
+SDL_ControllerSensorEvent_get_which x = deref_as_int (ptr_add_byte_offset (unsafeCast x) 8)
+
+export
+SDL_ControllerSensorEvent_set_which : SDL_ControllerSensorEvent -> Int -> PrimIO ()
+SDL_ControllerSensorEvent_set_which x v = ptr_set_as_int (ptr_add_byte_offset (unsafeCast x) 8) v
+
+export
+SDL_ControllerSensorEvent_get_sensor : SDL_ControllerSensorEvent -> Int
+SDL_ControllerSensorEvent_get_sensor x = deref_as_int (ptr_add_byte_offset (unsafeCast x) 12)
+
+export
+SDL_ControllerSensorEvent_set_sensor : SDL_ControllerSensorEvent -> Int -> PrimIO ()
+SDL_ControllerSensorEvent_set_sensor x v = ptr_set_as_int (ptr_add_byte_offset (unsafeCast x) 12) v
 
 
 export
@@ -369,6 +657,14 @@ MkSDL_SensorEvent = unsafeCast (unsafePerformIO (Mk_)) where
     io_pure (unsafeCast res)
     -- onCollectAny res free
 
+export
+SDL_SensorEvent_get_which : SDL_SensorEvent -> Int
+SDL_SensorEvent_get_which x = deref_as_int (ptr_add_byte_offset (unsafeCast x) 8)
+
+export
+SDL_SensorEvent_set_which : SDL_SensorEvent -> Int -> PrimIO ()
+SDL_SensorEvent_set_which x v = ptr_set_as_int (ptr_add_byte_offset (unsafeCast x) 8) v
+
 
 export
 SDL_QuitEvent : Type
@@ -396,6 +692,14 @@ MkSDL_UserEvent = unsafeCast (unsafePerformIO (Mk_)) where
     res <- malloc 32
     io_pure (unsafeCast res)
     -- onCollectAny res free
+
+export
+SDL_UserEvent_get_code : SDL_UserEvent -> Int
+SDL_UserEvent_get_code x = deref_as_int (ptr_add_byte_offset (unsafeCast x) 12)
+
+export
+SDL_UserEvent_set_code : SDL_UserEvent -> Int -> PrimIO ()
+SDL_UserEvent_set_code x v = ptr_set_as_int (ptr_add_byte_offset (unsafeCast x) 12) v
 
 
 export
@@ -483,7 +787,7 @@ MkSDL_Event = unsafePerformIO (Mk_) where
 
 export
 SDL_Event_type : SDL_Event -> Int
-SDL_Event_type u = unsafePerformIO (primIO (deref_as_int (unsafeCast u)))
+SDL_Event_type u = deref_as_int (unsafeCast u)
 
 export
 SDL_Event_common : SDL_Event -> SDL_CommonEvent
@@ -634,6 +938,10 @@ SDL_CreateRenderer : AnyPtr -> Int -> Int -> PrimIO AnyPtr
 export
 SDL_RenderSetLogicalSize : AnyPtr -> Int -> Int -> PrimIO Int
 
+%foreign "C:SDL_SetRenderDrawColor,SDL2"
+export
+SDL_SetRenderDrawColor : AnyPtr -> Bits8 -> Bits8 -> Bits8 -> Bits8 -> PrimIO Int
+
 %foreign "C:SDL_RenderClear,SDL2"
 export
 SDL_RenderClear : AnyPtr -> PrimIO Int
@@ -641,6 +949,10 @@ SDL_RenderClear : AnyPtr -> PrimIO Int
 %foreign "C:SDL_RenderDrawRect,SDL2"
 export
 SDL_RenderDrawRect : AnyPtr -> AnyPtr -> PrimIO Int
+
+%foreign "C:SDL_RenderFillRect,SDL2"
+export
+SDL_RenderFillRect : AnyPtr -> AnyPtr -> PrimIO Int
 
 %foreign "C:SDL_RenderPresent,SDL2"
 export

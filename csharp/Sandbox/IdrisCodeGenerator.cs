@@ -83,6 +83,22 @@ public static class IdrisCodeGenerator
     io_pure (unsafeCast res)
     -- onCollectAny res free");
         stringBuilder.AppendLine();
+
+        foreach (var field in node.Fields)
+        {
+            if (field.Type == DataTypes.SSize)
+            {
+                stringBuilder.AppendLine("export");
+                stringBuilder.AppendLine($"{node.Name}_get_{field.Name} : {node.Name} -> {ToIdrisTypeString(field.Type)}");
+                stringBuilder.AppendLine($"{node.Name}_get_{field.Name} x = deref_as_int (ptr_add_byte_offset (unsafeCast x) {field.OffsetInBytes})");
+                stringBuilder.AppendLine();
+
+                stringBuilder.AppendLine("export");
+                stringBuilder.AppendLine($"{node.Name}_set_{field.Name} : {node.Name} -> {ToIdrisTypeString(field.Type)} -> PrimIO ()");
+                stringBuilder.AppendLine($"{node.Name}_set_{field.Name} x v = ptr_set_as_int (ptr_add_byte_offset (unsafeCast x) {field.OffsetInBytes}) v");
+                stringBuilder.AppendLine();
+            }
+        }
     }
 
     public static void WriteUnion(StringBuilder stringBuilder, Union node)
@@ -114,7 +130,7 @@ public static class IdrisCodeGenerator
 
             if ((field.Type == DataTypes.SSize) || (field.Type == DataTypes.USize))
             {
-                stringBuilder.AppendLine($"{node.Name}_{field.Name} u = unsafePerformIO (primIO (deref_as_int (unsafeCast u)))");
+                stringBuilder.AppendLine($"{node.Name}_{field.Name} u = deref_as_int (unsafeCast u)");
             }
             else
             {
