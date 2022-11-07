@@ -13,6 +13,9 @@ import SDL2
 
 record GameConfig where
     constructor MkGameConfig
+    windowX : Int
+    windowY : Int
+
     windowWidth : Int
     windowHeight : Int
 
@@ -36,6 +39,9 @@ record GameConfig where
 
 gameConfig : GameConfig
 gameConfig = MkGameConfig
+    100
+    100
+
     640
     480
 
@@ -51,82 +57,83 @@ gameConfig = MkGameConfig
     20
     20
 
-    200
+    300
 
     100
     
     10
 
+lPaddleX : Double
+lPaddleX = ((cast gameConfig.windowWidth) / 2) - (cast gameConfig.paddleHorizontalOffset)
+
+rPaddleX : Double
+rPaddleX = ((cast gameConfig.windowWidth) / 2) + (cast gameConfig.paddleHorizontalOffset)
+
 record GameState where
     constructor MkGameState
-    ballX : Int
-    ballY : Int
+    lPaddleY : Double
+    rPaddleY : Double
 
-    lPaddleY : Int
-    rPaddleY : Int
+    ballX : Double
+    ballY : Double
 
     lScore : Int
     rScore : Int
 
-renderPaddle : AnyPtr -> Int -> Int -> IO ()
-renderPaddle rend x y = do
+renderWhiteRect : AnyPtr -> Double -> Double -> Double -> Double -> IO ()
+renderWhiteRect rend x y w h = do
     r <- pure (MkSDL_Rect)
-    primIO (SDL_Rect_set_x r x)
-    primIO (SDL_Rect_set_y r y)
-    primIO (SDL_Rect_set_w r gameConfig.paddleWidth)
-    primIO (SDL_Rect_set_h r gameConfig.paddleHeight)
+    primIO (SDL_Rect_set_x r (cast (x - (w / 2))))
+    primIO (SDL_Rect_set_y r (cast (y - (h / 2))))
+    primIO (SDL_Rect_set_w r (cast w))
+    primIO (SDL_Rect_set_h r (cast h))
 
     xx <- primIO (SDL_SetRenderDrawColor rend 255 255 255 255)
     x <- primIO (SDL_RenderFillRect rend (unsafeCast r))
 
     pure ()
 
-renderBall : AnyPtr -> Int -> Int -> IO ()
-renderBall rend x y = do
-    r <- pure (MkSDL_Rect)
-    primIO (SDL_Rect_set_x r x)
-    primIO (SDL_Rect_set_y r y)
-    primIO (SDL_Rect_set_w r gameConfig.ballWidth)
-    primIO (SDL_Rect_set_h r gameConfig.ballHeight)
+renderPaddle : AnyPtr -> Double -> Double -> IO ()
+renderPaddle rend x y = renderWhiteRect rend x y (cast gameConfig.paddleWidth) (cast gameConfig.paddleHeight)
 
-    xx <- primIO (SDL_SetRenderDrawColor rend 255 255 255 255)
-    x <- primIO (SDL_RenderFillRect rend (unsafeCast r))
+renderBall : AnyPtr -> Double -> Double -> IO ()
+renderBall rend x y = renderWhiteRect rend x y (cast gameConfig.ballWidth) (cast gameConfig.ballHeight)
 
-    pure ()
-
-renderFrame : AnyPtr -> IO ()
-renderFrame rend = do
+renderFrame : AnyPtr -> GameState -> IO ()
+renderFrame rend state = do
     xx <- primIO (SDL_SetRenderDrawColor rend gameConfig.backgroundColorR gameConfig.backgroundColorG gameConfig.backgroundColorB 255)
     res <- primIO (SDL_RenderClear rend)
     
-    renderPaddle rend 10 10
-    renderPaddle rend 400 10
+    renderPaddle rend lPaddleX state.lPaddleY
+    renderPaddle rend rPaddleX state.rPaddleY
 
-    renderBall rend 200 200
+    renderBall rend state.ballX state.ballY
 
     primIO (SDL_RenderPresent rend)
 
-doFrame : SDL_Event -> AnyPtr -> IO ()
-doFrame evt rend = do
+doFrame : SDL_Event -> AnyPtr -> GameState -> IO ()
+doFrame evt rend state = do
     asdf <- primIO (SDL_PollEvent (unsafeCast evt))
     eventType <- io_pure (SDL_Event_type evt)
 
-    renderFrame rend
+    renderFrame rend state
 
-    if eventType /= SDL_QUIT then doFrame evt rend else io_pure ()
+    if eventType /= SDL_QUIT then doFrame evt rend state else io_pure ()
 
 main : IO ()
 main = do
     x <- primIO (SDL_Init SDL_INIT_VIDEO)
-    win <- primIO (SDL_CreateWindow gameConfig.windowTitle 100 100 gameConfig.windowWidth gameConfig.windowHeight 0)
+    win <- primIO (SDL_CreateWindow gameConfig.windowTitle gameConfig.windowX gameConfig.windowY gameConfig.windowWidth gameConfig.windowHeight 0)
     rend <- primIO (SDL_CreateRenderer win (-1) SDL_RENDERER_ACCELERATED)
     x <- primIO (SDL_RenderSetLogicalSize rend gameConfig.windowWidth gameConfig.windowHeight)
 
     surf <- primIO (SDL_GetWindowSurface win)
     y <- primIO (SDL_UpdateWindowSurface win)
 
-    fdsa <- pure (MkSDL_Event)
+    evt <- pure (MkSDL_Event)
 
-    doFrame fdsa rend
+    state <- pure (MkGameState ((cast gameConfig.windowHeight) / 2) ((cast gameConfig.windowHeight) / 2) ((cast gameConfig.windowWidth) / 2) ((cast gameConfig.windowHeight) / 2) 0 0)
+
+    doFrame evt rend state
 
     pure ()
