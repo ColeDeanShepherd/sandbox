@@ -5,6 +5,10 @@ import System.FFI
 import Ffilib
 
 export
+SDL_QUIT : Int
+SDL_QUIT = 0x100
+
+export
 SDL_INIT_VIDEO : Int
 SDL_INIT_VIDEO = 0x00000020
 

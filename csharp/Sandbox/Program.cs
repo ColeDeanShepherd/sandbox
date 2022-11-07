@@ -27,7 +27,7 @@ public static class Cli
         await GenerateIdris2Bindings(
             "C:/Users/R_SD/dev/personal/SDL/include/SDL.h",
             "SDL2",
-            @"C:\Users\R_SD\dev\personal\sandbox\idris2\examples",
+            @"C:\Users\R_SD\dev\personal\sandbox\idris2\examples\pong",
             new()
             {
                 "SDL_Event",
@@ -57,6 +57,7 @@ public static class Cli
             },
             new()
             {
+                ("SDL_QUIT", "Int", "0x100"),
                 ("SDL_INIT_VIDEO", "Int", "0x00000020"),
                 ("SDL_RENDERER_ACCELERATED", "Int", "0x00000002")
             });

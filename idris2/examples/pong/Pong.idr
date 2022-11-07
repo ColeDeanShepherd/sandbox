@@ -16,7 +16,9 @@ record GameConfig where
     windowWidth : Int
     windowHeight : Int
 
-    -- background color
+    backgroundColorR: Bits8
+    backgroundColorG: Bits8
+    backgroundColorB: Bits8
 
     windowTitle: String
 
@@ -32,6 +34,29 @@ record GameConfig where
 
     pointsToWin : Int
 
+gameConfig : GameConfig
+gameConfig = MkGameConfig
+    640
+    480
+
+    0
+    0
+    0
+
+    "Pong in Idris2"
+
+    20
+    80
+
+    20
+    20
+
+    200
+
+    100
+    
+    10
+
 record GameState where
     constructor MkGameState
     ballX : Int
@@ -43,41 +68,65 @@ record GameState where
     lScore : Int
     rScore : Int
 
-doFrame : SDL_Event -> AnyPtr -> SDL_Rect -> IO ()
-doFrame evt rend r = do
-    asdf <- primIO (SDL_PollEvent (unsafeCast evt))
+renderPaddle : AnyPtr -> Int -> Int -> IO ()
+renderPaddle rend x y = do
+    r <- pure (MkSDL_Rect)
+    primIO (SDL_Rect_set_x r x)
+    primIO (SDL_Rect_set_y r y)
+    primIO (SDL_Rect_set_w r gameConfig.paddleWidth)
+    primIO (SDL_Rect_set_h r gameConfig.paddleHeight)
 
-    eventType <- io_pure (SDL_Event_type evt)
-    putStrLn (show eventType)
-
-    xx <- primIO (SDL_SetRenderDrawColor rend 0 0 0 255)
-    res <- primIO (SDL_RenderClear rend)
-    
     xx <- primIO (SDL_SetRenderDrawColor rend 255 255 255 255)
     x <- primIO (SDL_RenderFillRect rend (unsafeCast r))
 
+    pure ()
+
+renderBall : AnyPtr -> Int -> Int -> IO ()
+renderBall rend x y = do
+    r <- pure (MkSDL_Rect)
+    primIO (SDL_Rect_set_x r x)
+    primIO (SDL_Rect_set_y r y)
+    primIO (SDL_Rect_set_w r gameConfig.ballWidth)
+    primIO (SDL_Rect_set_h r gameConfig.ballHeight)
+
+    xx <- primIO (SDL_SetRenderDrawColor rend 255 255 255 255)
+    x <- primIO (SDL_RenderFillRect rend (unsafeCast r))
+
+    pure ()
+
+renderFrame : AnyPtr -> IO ()
+renderFrame rend = do
+    xx <- primIO (SDL_SetRenderDrawColor rend gameConfig.backgroundColorR gameConfig.backgroundColorG gameConfig.backgroundColorB 255)
+    res <- primIO (SDL_RenderClear rend)
+    
+    renderPaddle rend 10 10
+    renderPaddle rend 400 10
+
+    renderBall rend 200 200
+
     primIO (SDL_RenderPresent rend)
 
-    if eventType /= 0x100 then doFrame evt rend r else io_pure ()
+doFrame : SDL_Event -> AnyPtr -> IO ()
+doFrame evt rend = do
+    asdf <- primIO (SDL_PollEvent (unsafeCast evt))
+    eventType <- io_pure (SDL_Event_type evt)
+
+    renderFrame rend
+
+    if eventType /= SDL_QUIT then doFrame evt rend else io_pure ()
 
 main : IO ()
 main = do
     x <- primIO (SDL_Init SDL_INIT_VIDEO)
-    win <- primIO (SDL_CreateWindow "Test" 100 100 640 480 0)
+    win <- primIO (SDL_CreateWindow gameConfig.windowTitle 100 100 gameConfig.windowWidth gameConfig.windowHeight 0)
     rend <- primIO (SDL_CreateRenderer win (-1) SDL_RENDERER_ACCELERATED)
-    x <- primIO (SDL_RenderSetLogicalSize rend 640 480)
+    x <- primIO (SDL_RenderSetLogicalSize rend gameConfig.windowWidth gameConfig.windowHeight)
 
     surf <- primIO (SDL_GetWindowSurface win)
     y <- primIO (SDL_UpdateWindowSurface win)
 
-    r <- pure (MkSDL_Rect)
-    primIO (SDL_Rect_set_x r 80)
-    primIO (SDL_Rect_set_y r 20)
-    primIO (SDL_Rect_set_w r 100)
-    primIO (SDL_Rect_set_h r 40)
-
     fdsa <- pure (MkSDL_Event)
 
-    doFrame fdsa rend r
+    doFrame fdsa rend
 
     pure ()
