@@ -43,6 +43,23 @@ record GameState where
     lScore : Int
     rScore : Int
 
+doFrame : SDL_Event -> AnyPtr -> SDL_Rect -> IO ()
+doFrame evt rend r = do
+    asdf <- primIO (SDL_PollEvent (unsafeCast evt))
+
+    eventType <- io_pure (SDL_Event_type evt)
+    putStrLn (show eventType)
+
+    xx <- primIO (SDL_SetRenderDrawColor rend 0 0 0 255)
+    res <- primIO (SDL_RenderClear rend)
+    
+    xx <- primIO (SDL_SetRenderDrawColor rend 255 255 255 255)
+    x <- primIO (SDL_RenderFillRect rend (unsafeCast r))
+
+    primIO (SDL_RenderPresent rend)
+
+    if eventType /= 0x100 then doFrame evt rend r else io_pure ()
+
 main : IO ()
 main = do
     x <- primIO (SDL_Init SDL_INIT_VIDEO)
@@ -53,24 +70,14 @@ main = do
     surf <- primIO (SDL_GetWindowSurface win)
     y <- primIO (SDL_UpdateWindowSurface win)
 
-    fdsa <- pure (MkSDL_Event)
-    asdf <- primIO (SDL_PollEvent (unsafeCast fdsa))
-
-    eventType <- io_pure (SDL_Event_type fdsa)
-    putStrLn (show eventType)
-
-    res <- primIO (SDL_RenderClear rend)
-
     r <- pure (MkSDL_Rect)
     primIO (SDL_Rect_set_x r 80)
     primIO (SDL_Rect_set_y r 20)
     primIO (SDL_Rect_set_w r 100)
     primIO (SDL_Rect_set_h r 40)
-    
-    xx <- primIO (SDL_SetRenderDrawColor rend 255 255 255 255)
-    x <- primIO (SDL_RenderFillRect rend (unsafeCast r))
 
-    primIO (SDL_RenderPresent rend)
-    
-    primIO  (SDL_Delay 5000)
+    fdsa <- pure (MkSDL_Event)
+
+    doFrame fdsa rend r
+
     pure ()
