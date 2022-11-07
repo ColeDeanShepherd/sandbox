@@ -116,9 +116,11 @@ doFrame evt rend state = do
     asdf <- primIO (SDL_PollEvent (unsafeCast evt))
     eventType <- io_pure (SDL_Event_type evt)
 
-    renderFrame rend state
+    let state2 = { ballX $= (+ 0.01) } state
 
-    if eventType /= SDL_QUIT then doFrame evt rend state else io_pure ()
+    renderFrame rend state2
+
+    if eventType /= SDL_QUIT then doFrame evt rend state2 else io_pure ()
 
 main : IO ()
 main = do
