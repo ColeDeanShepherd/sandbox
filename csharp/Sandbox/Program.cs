@@ -59,7 +59,11 @@ public static class Cli
             {
                 ("SDL_QUIT", "Int", "0x100"),
                 ("SDL_INIT_VIDEO", "Int", "0x00000020"),
-                ("SDL_RENDERER_ACCELERATED", "Int", "0x00000002")
+                ("SDL_RENDERER_ACCELERATED", "Int", "0x00000002"),
+                ("SDL_KEYDOWN", "Int", "0x300"),
+                ("SDL_KEYUP", "Int", "0x301"),
+                ("SDLK_w", "Int", "77"),
+                ("SDLK_s", "Int", "73"),
             });
     }
 

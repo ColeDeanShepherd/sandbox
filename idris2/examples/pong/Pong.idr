@@ -39,29 +39,29 @@ record GameConfig where
 
 gameConfig : GameConfig
 gameConfig = MkGameConfig
-    100
-    100
+    {windowX=100,
+    windowY=100,
 
-    640
-    480
+    windowWidth=640,
+    windowHeight=480,
 
-    0
-    0
-    0
+    backgroundColorR=0,
+    backgroundColorG=0,
+    backgroundColorB=0,
 
-    "Pong in Idris2"
+    windowTitle="Pong in Idris2",
 
-    20
-    80
+    paddleWidth=20,
+    paddleHeight=80,
 
-    20
-    20
+    ballWidth=20,
+    ballHeight=20,
 
-    300
+    paddleHorizontalOffset=300,
 
-    100
+    ballSpeed=100,
     
-    10
+    pointsToWin=10}
 
 lPaddleX : Double
 lPaddleX = ((cast gameConfig.windowWidth) / 2) - (cast gameConfig.paddleHorizontalOffset)
@@ -73,6 +73,9 @@ record GameState where
     constructor MkGameState
     lPaddleY : Double
     rPaddleY : Double
+
+    lPaddleDirection : Int
+    rPaddleDirection : Int
 
     ballX : Double
     ballY : Double
@@ -113,14 +116,21 @@ renderFrame rend state = do
 
 doFrame : SDL_Event -> AnyPtr -> GameState -> IO ()
 doFrame evt rend state = do
+    -- TODO: poll multiple events per frame
     asdf <- primIO (SDL_PollEvent (unsafeCast evt))
     eventType <- io_pure (SDL_Event_type evt)
 
-    let state2 = { ballX $= (+ 0.01) } state
+    let state = if (eventType == SDL_KEYDOWN) then { lPaddleDirection := 1 } state else if (eventType == SDL_KEYUP) then { lPaddleDirection := 0 } state else state
 
-    renderFrame rend state2
+    let state = {
+            ballX $= (+ 0.01),
+            lPaddleY $= (+ if state.lPaddleDirection == 1 then -0.01 else if state.lPaddleDirection == -1 then 0.01 else 0),
+            rPaddleY $= (+ 0.01)
+        } state
 
-    if eventType /= SDL_QUIT then doFrame evt rend state2 else io_pure ()
+    renderFrame rend state
+
+    if eventType /= SDL_QUIT then doFrame evt rend state else io_pure ()
 
 main : IO ()
 main = do
@@ -134,7 +144,17 @@ main = do
 
     evt <- pure (MkSDL_Event)
 
-    state <- pure (MkGameState ((cast gameConfig.windowHeight) / 2) ((cast gameConfig.windowHeight) / 2) ((cast gameConfig.windowWidth) / 2) ((cast gameConfig.windowHeight) / 2) 0 0)
+    state <- pure (
+        MkGameState {
+            lPaddleY = ((cast gameConfig.windowHeight) / 2),
+            rPaddleY = ((cast gameConfig.windowHeight) / 2),
+            lPaddleDirection = 0,
+            rPaddleDirection = 0,
+            ballX = ((cast gameConfig.windowWidth) / 2),
+            ballY = ((cast gameConfig.windowHeight) / 2),
+            lScore = 0,
+            rScore = 0
+        })
 
     doFrame evt rend state
 

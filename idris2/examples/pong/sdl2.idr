@@ -17,6 +17,22 @@ SDL_RENDERER_ACCELERATED : Int
 SDL_RENDERER_ACCELERATED = 0x00000002
 
 export
+SDL_KEYDOWN : Int
+SDL_KEYDOWN = 0x300
+
+export
+SDL_KEYUP : Int
+SDL_KEYUP = 0x301
+
+export
+SDLK_w : Int
+SDLK_w = 77
+
+export
+SDLK_s : Int
+SDLK_s = 73
+
+export
 SDL_Scancode : Type
 SDL_Scancode = Int
 
