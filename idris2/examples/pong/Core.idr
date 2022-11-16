@@ -1,5 +1,5 @@
 module Core
 
 export
-unsafeCast : a -> b
+unsafeCast : from -> to
 unsafeCast = believe_me

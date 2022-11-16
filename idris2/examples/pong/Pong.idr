@@ -2,19 +2,12 @@ module Main
 
 import System.FFI
 import Core
+import Vector2
 import SDL2
-
--- To-Do
--- - Game configuration
--- - Game state
--- - Init fn
--- - Update fn
--- - Render fn (or fn to map from game state to render state, then pass render state to SDL)
 
 record GameConfig where
     constructor MkGameConfig
-    windowX : Int
-    windowY : Int
+    windowPos : Vector2 Int
 
     windowWidth : Int
     windowHeight : Int
@@ -37,38 +30,6 @@ record GameConfig where
 
     pointsToWin : Int
 
-gameConfig : GameConfig
-gameConfig = MkGameConfig
-    {windowX=100,
-    windowY=100,
-
-    windowWidth=640,
-    windowHeight=480,
-
-    backgroundColorR=0,
-    backgroundColorG=0,
-    backgroundColorB=0,
-
-    windowTitle="Pong in Idris2",
-
-    paddleWidth=20,
-    paddleHeight=80,
-
-    ballWidth=20,
-    ballHeight=20,
-
-    paddleHorizontalOffset=300,
-
-    ballSpeed=100,
-    
-    pointsToWin=10}
-
-lPaddleX : Double
-lPaddleX = ((cast gameConfig.windowWidth) / 2) - (cast gameConfig.paddleHorizontalOffset)
-
-rPaddleX : Double
-rPaddleX = ((cast gameConfig.windowWidth) / 2) + (cast gameConfig.paddleHorizontalOffset)
-
 record GameState where
     constructor MkGameState
     lPaddleY : Double
@@ -77,17 +38,55 @@ record GameState where
     lPaddleDirection : Int
     rPaddleDirection : Int
 
-    ballX : Double
-    ballY : Double
+    ballPos : Vector2 Double
 
     lScore : Int
     rScore : Int
 
-renderWhiteRect : AnyPtr -> Double -> Double -> Double -> Double -> IO ()
-renderWhiteRect rend x y w h = do
+gameConfig : GameConfig
+gameConfig = MkGameConfig
+    {
+    windowPos = MkVector2 {t=Int} 100 100,
+
+    windowWidth = 640,
+    windowHeight = 480,
+
+    backgroundColorR = 0,
+    backgroundColorG = 0,
+    backgroundColorB = 0,
+
+    windowTitle = "Pong in Idris2",
+
+    paddleWidth = 20,
+    paddleHeight = 80,
+
+    ballWidth = 20,
+    ballHeight = 20,
+
+    paddleHorizontalOffset = 300,
+
+    ballSpeed = 100,
+    
+    pointsToWin = 10
+    }
+
+lPaddleX : Double
+lPaddleX = ((cast gameConfig.windowWidth) / 2) - (cast gameConfig.paddleHorizontalOffset)
+
+lPaddlePos : GameState -> Vector2 Double
+lPaddlePos state = MkVector2 {t = Double} lPaddleX state.lPaddleY
+
+rPaddleX : Double
+rPaddleX = ((cast gameConfig.windowWidth) / 2) + (cast gameConfig.paddleHorizontalOffset)
+
+rPaddlePos : GameState -> Vector2 Double
+rPaddlePos state = MkVector2 {t = Double} rPaddleX state.rPaddleY
+
+renderWhiteRect : AnyPtr -> Vector2 Double -> Double -> Double -> IO ()
+renderWhiteRect rend pos w h = do
     r <- pure (MkSDL_Rect)
-    primIO (SDL_Rect_set_x r (cast (x - (w / 2))))
-    primIO (SDL_Rect_set_y r (cast (y - (h / 2))))
+    primIO (SDL_Rect_set_x r (cast (pos.x - (w / 2))))
+    primIO (SDL_Rect_set_y r (cast (pos.y - (h / 2))))
     primIO (SDL_Rect_set_w r (cast w))
     primIO (SDL_Rect_set_h r (cast h))
 
@@ -96,34 +95,36 @@ renderWhiteRect rend x y w h = do
 
     pure ()
 
-renderPaddle : AnyPtr -> Double -> Double -> IO ()
-renderPaddle rend x y = renderWhiteRect rend x y (cast gameConfig.paddleWidth) (cast gameConfig.paddleHeight)
+renderPaddle : AnyPtr -> Vector2 Double -> IO ()
+renderPaddle rend pos = renderWhiteRect rend pos (cast gameConfig.paddleWidth) (cast gameConfig.paddleHeight)
 
-renderBall : AnyPtr -> Double -> Double -> IO ()
-renderBall rend x y = renderWhiteRect rend x y (cast gameConfig.ballWidth) (cast gameConfig.ballHeight)
+renderBall : AnyPtr -> Vector2 Double -> IO ()
+renderBall rend pos = renderWhiteRect rend pos (cast gameConfig.ballWidth) (cast gameConfig.ballHeight)
 
 renderFrame : AnyPtr -> GameState -> IO ()
 renderFrame rend state = do
     xx <- primIO (SDL_SetRenderDrawColor rend gameConfig.backgroundColorR gameConfig.backgroundColorG gameConfig.backgroundColorB 255)
     res <- primIO (SDL_RenderClear rend)
     
-    renderPaddle rend lPaddleX state.lPaddleY
-    renderPaddle rend rPaddleX state.rPaddleY
+    renderPaddle rend (lPaddlePos state)
+    renderPaddle rend (rPaddlePos state) 
 
-    renderBall rend state.ballX state.ballY
+    renderBall rend state.ballPos
 
     primIO (SDL_RenderPresent rend)
 
-doFrame : SDL_Event -> AnyPtr -> GameState -> IO ()
+doFrame : (evt2 : SDL_Event) -> AnyPtr -> GameState -> IO ()
 doFrame evt rend state = do
     -- TODO: poll multiple events per frame
     asdf <- primIO (SDL_PollEvent (unsafeCast evt))
     eventType <- io_pure (SDL_Event_type evt)
 
-    let state = if (eventType == SDL_KEYDOWN) then { lPaddleDirection := 1 } state else if (eventType == SDL_KEYUP) then { lPaddleDirection := 0 } state else state
+    let state = if (eventType == SDL_KEYDOWN) then ({ lPaddleDirection := 1 } state) else if (eventType == SDL_KEYUP) then ({ lPaddleDirection := 0 } state) else state
 
+    --if (eventType == SDL_KEYDOWN) then putStrLn (show (getField (getField (unsafeCast {to=SDL_KeyboardEvent} evt) "keysym") "scancode")) else io_pure ()
+    
     let state = {
-            ballX $= (+ 0.01),
+            ballPos := (MkVector2 {t = Double} (0.01 + state.ballPos.x) (state.ballPos.y)),
             lPaddleY $= (+ if state.lPaddleDirection == 1 then -0.01 else if state.lPaddleDirection == -1 then 0.01 else 0),
             rPaddleY $= (+ 0.01)
         } state
@@ -135,7 +136,7 @@ doFrame evt rend state = do
 main : IO ()
 main = do
     x <- primIO (SDL_Init SDL_INIT_VIDEO)
-    win <- primIO (SDL_CreateWindow gameConfig.windowTitle gameConfig.windowX gameConfig.windowY gameConfig.windowWidth gameConfig.windowHeight 0)
+    win <- primIO (SDL_CreateWindow gameConfig.windowTitle gameConfig.windowPos.x gameConfig.windowPos.y gameConfig.windowWidth gameConfig.windowHeight 0)
     rend <- primIO (SDL_CreateRenderer win (-1) SDL_RENDERER_ACCELERATED)
     x <- primIO (SDL_RenderSetLogicalSize rend gameConfig.windowWidth gameConfig.windowHeight)
 
@@ -150,8 +151,7 @@ main = do
             rPaddleY = ((cast gameConfig.windowHeight) / 2),
             lPaddleDirection = 0,
             rPaddleDirection = 0,
-            ballX = ((cast gameConfig.windowWidth) / 2),
-            ballY = ((cast gameConfig.windowHeight) / 2),
+            ballPos = MkVector2 {t = Double} ((cast gameConfig.windowWidth) / 2)  ((cast gameConfig.windowHeight) / 2),
             lScore = 0,
             rScore = 0
         })
