@@ -1,3 +1,11 @@
+-- Problems --
+-- \r\n doesn't work
+-- VS Code extension doesn't work on windows
+-- Compiler output in PowerShell doesn't work properly
+-- Using Struct doesn't work as intended
+-- Passing a GCAnyPtr seems to fail
+-- "case" doesn't work on constants
+
 module Main
 
 import System.FFI
@@ -43,10 +51,12 @@ record GameState where
     lScore : Int
     rScore : Int
 
+    quitting: Bool
+
 gameConfig : GameConfig
 gameConfig = MkGameConfig
     {
-    windowPos = MkVector2 {t=Int} 100 100,
+    windowPos = MkVector2 {t = Int} 100 100,
 
     windowWidth = 640,
     windowHeight = 480,
@@ -113,16 +123,22 @@ renderFrame rend state = do
 
     primIO (SDL_RenderPresent rend)
 
-doFrame : (evt2 : SDL_Event) -> AnyPtr -> GameState -> IO ()
+handleEvent : SDL_Event -> GameState -> GameState
+handleEvent evt state =
+    let eventType = SDL_Event_type evt in
+        if eventType == SDL_KEYDOWN then { lPaddleDirection := 1 } state else
+        if eventType == SDL_KEYUP then { lPaddleDirection := 0 } state else
+        if eventType == SDL_QUIT then { quitting := True } state else
+        state
+        --if (eventType == SDL_KEYDOWN) then putStrLn (show (getField (getField (unsafeCast {to=SDL_KeyboardEvent} evt) "keysym") "scancode")) else io_pure ()
+
+doFrame : SDL_Event -> AnyPtr -> GameState -> IO ()
 doFrame evt rend state = do
     -- TODO: poll multiple events per frame
     asdf <- primIO (SDL_PollEvent (unsafeCast evt))
-    eventType <- io_pure (SDL_Event_type evt)
-
-    let state = if (eventType == SDL_KEYDOWN) then ({ lPaddleDirection := 1 } state) else if (eventType == SDL_KEYUP) then ({ lPaddleDirection := 0 } state) else state
-
-    --if (eventType == SDL_KEYDOWN) then putStrLn (show (getField (getField (unsafeCast {to=SDL_KeyboardEvent} evt) "keysym") "scancode")) else io_pure ()
     
+    let state = handleEvent evt state
+
     let state = {
             ballPos := (MkVector2 {t = Double} (0.01 + state.ballPos.x) (state.ballPos.y)),
             lPaddleY $= (+ if state.lPaddleDirection == 1 then -0.01 else if state.lPaddleDirection == -1 then 0.01 else 0),
@@ -131,7 +147,7 @@ doFrame evt rend state = do
 
     renderFrame rend state
 
-    if eventType /= SDL_QUIT then doFrame evt rend state else io_pure ()
+    if state.quitting == False then doFrame evt rend state else io_pure ()
 
 main : IO ()
 main = do
@@ -153,7 +169,8 @@ main = do
             rPaddleDirection = 0,
             ballPos = MkVector2 {t = Double} ((cast gameConfig.windowWidth) / 2)  ((cast gameConfig.windowHeight) / 2),
             lScore = 0,
-            rScore = 0
+            rScore = 0,
+            quitting = False
         })
 
     doFrame evt rend state
