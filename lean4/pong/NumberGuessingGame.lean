@@ -5,7 +5,7 @@ mutual
 
 partial def main : IO Unit := do
   IO.println "Number Guessing Game in Lean 4"
-  IO.println "==============================¬"
+  IO.println "==============================\n"
   
   let ans <- IO.rand minAns maxAns
   let mut numGuesses := 0
