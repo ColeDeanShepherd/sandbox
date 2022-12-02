@@ -7,3 +7,6 @@ csharp/**/obj
 csharp/**/.vs
 
 rust/**/target/
+
+lean4/**/build
+lean4/**/lake-packages/*
