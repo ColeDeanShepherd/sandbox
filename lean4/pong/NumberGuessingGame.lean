@@ -1,40 +1,43 @@
+def minAns := 1
+def maxAns := 100
+
 mutual
 
 partial def main : IO Unit := do
   IO.println "Number Guessing Game in Lean 4"
-  IO.println "=============================="
+  IO.println "==============================¬"
   
-  let ans <- IO.rand 1 100
+  let ans <- IO.rand minAns maxAns
+  let mut numGuesses := 0
 
-  doGameLoop ans
+  repeat do
+    IO.println s!"Guess a number from {minAns} to {maxAns}."
+    let guess <- readGuess
+    IO.println ""
+    
+    numGuesses := numGuesses + 1
 
-partial def doGameLoop (ans: Nat) : IO Unit := do
+    if guess == ans then
+      IO.println s!"Congratulations, you're correct! You guessed {numGuesses} times.\n"
+      break
+    else if guess < ans then
+      IO.println "Your guess is too low.\n"
+    else
+      IO.println "Your guess is too high.\n"
+
+partial def readGuess : IO Nat := do
   let stdin <- IO.getStdin
 
-  IO.println "Guess a number from 1 to 100."
-  
   let guess? :=
        (<- stdin.getLine)
     |> String.dropRightWhile (p := Char.isWhitespace)
     |> String.toNat?
   
-  IO.println ""
-
-  match guess? with
-  | some guess => do
-    if guess < ans then
-      IO.println "Your guess is too low."
-      IO.println ""
-      doGameLoop ans
-    else if guess > ans then
-      IO.println "Your guess is too high."
-      IO.println ""
-      doGameLoop ans
-    else
-      IO.println "Congratulations, you're correct!"
-  | none => do
-    IO.println "Your guess is invalid."
-    IO.println ""
-    doGameLoop ans
+  if let some guess := guess? then
+    if guess >= minAns && guess <= maxAns then
+      return guess
   
+  IO.println "Your guess is invalid.\n"
+  readGuess
+
 end
