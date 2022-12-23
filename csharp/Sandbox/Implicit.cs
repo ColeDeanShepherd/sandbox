@@ -34,13 +34,13 @@ public struct Implicit<T>
         return new WithScope();
     }
 
-    private static AsyncLocal<ImmutableStack<T>> _valueStack;
-
     static Implicit()
     {
         _valueStack = new();
         _valueStack.Value = ImmutableStack<T>.Empty;
     }
+
+    private static AsyncLocal<ImmutableStack<T>> _valueStack;
 
     public T Value => _valueStack.Value!.Peek();
 }
