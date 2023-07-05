@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32929.385
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sandbox", "Sandbox.csproj", "{6DC1DA8A-1015-4687-95D4-1F78ACCA809F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sandbox", "Sandbox.csproj", "{6DC1DA8A-1015-4687-95D4-1F78ACCA809F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunctionPurityAnalyzer", "..\FunctionPurityAnalyzer\FunctionPurityAnalyzer.csproj", "{702ED007-B265-430A-BFD2-8C9C2E6752FC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{6DC1DA8A-1015-4687-95D4-1F78ACCA809F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6DC1DA8A-1015-4687-95D4-1F78ACCA809F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6DC1DA8A-1015-4687-95D4-1F78ACCA809F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{702ED007-B265-430A-BFD2-8C9C2E6752FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{702ED007-B265-430A-BFD2-8C9C2E6752FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{702ED007-B265-430A-BFD2-8C9C2E6752FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{702ED007-B265-430A-BFD2-8C9C2E6752FC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
